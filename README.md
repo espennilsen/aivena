@@ -27,7 +27,6 @@ npm run tui     # TUI (same)
 ├── package.json                # Launch scripts (no deps)
 ├── AGENTS.md                   # Agent identity + conventions
 ├── CHANGELOG.md                # Release history
-├── MIGRATION.md                # Version migration guide
 └── workspace/                  # Pi working directory
     ├── .pi/
     │   ├── settings.json       # Extension config (channels, webserver, heartbeat, etc.)
