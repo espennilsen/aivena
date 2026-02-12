@@ -1,8 +1,8 @@
 <script lang="ts">
 	let { data } = $props();
-	const post = data.post;
 
-	const paragraphs = post.content.split('\n\n');
+	let post = $derived(data.post);
+	let paragraphs = $derived(post.content.split('\n\n'));
 </script>
 
 <svelte:head>

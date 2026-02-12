@@ -36,6 +36,8 @@
 				>Architecture</a
 			>
 			<a href="/docs" class="text-sm text-gray-400 transition hover:text-white">Docs</a>
+			<a href="/stack" class="text-sm text-gray-400 transition hover:text-white">Stack</a>
+			<a href="/changelog" class="text-sm text-gray-400 transition hover:text-white">Changelog</a>
 			<a href="/blog" class="text-sm text-gray-400 transition hover:text-white">Blog</a>
 			<a
 				href="https://github.com/espennilsen/aivena"
@@ -92,6 +94,16 @@
 					href="/docs"
 					class="text-sm text-gray-400 hover:text-white"
 					onclick={() => (mobileMenuOpen = false)}>Docs</a
+				>
+				<a
+					href="/stack"
+					class="text-sm text-gray-400 hover:text-white"
+					onclick={() => (mobileMenuOpen = false)}>Stack</a
+				>
+				<a
+					href="/changelog"
+					class="text-sm text-gray-400 hover:text-white"
+					onclick={() => (mobileMenuOpen = false)}>Changelog</a
 				>
 				<a
 					href="/blog"
