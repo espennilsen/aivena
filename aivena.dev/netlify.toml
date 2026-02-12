@@ -1,0 +1,21 @@
+[build]
+  base = "aivena.dev"
+  command = "pnpm build"
+  publish = ".svelte-kit/output"
+
+[build.environment]
+  NODE_VERSION = "20"
+  PNPM_VERSION = "10"
+
+[[redirects]]
+  from = "https://www.aivena.dev/*"
+  to = "https://aivena.dev/:splat"
+  status = 301
+  force = true
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
