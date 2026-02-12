@@ -1,20 +1,25 @@
 <script lang="ts">
-	import { getApiToken, setApiToken, clearApiToken } from '$lib/admin/api';
+	import { isConnected, setApiEndpoint, setApiToken, clearSession, getApiEndpoint } from '$lib/admin/api';
 	import { page } from '$app/state';
 
 	let { children } = $props();
 
 	let authenticated = $state(false);
+	let endpointInput = $state('');
 	let tokenInput = $state('');
 	let sidebarOpen = $state(false);
 
-	// Check for existing token on mount
+	// Check for existing session on mount
 	$effect(() => {
-		authenticated = !!getApiToken();
+		authenticated = isConnected();
+		if (!authenticated) {
+			endpointInput = getApiEndpoint() ?? 'https://';
+		}
 	});
 
 	function login() {
-		if (tokenInput.trim()) {
+		if (endpointInput.trim() && tokenInput.trim()) {
+			setApiEndpoint(endpointInput.trim());
 			setApiToken(tokenInput.trim());
 			authenticated = true;
 			tokenInput = '';
@@ -22,8 +27,9 @@
 	}
 
 	function logout() {
-		clearApiToken();
+		clearSession();
 		authenticated = false;
+		endpointInput = 'https://';
 	}
 
 	const nav = [
@@ -61,8 +67,16 @@
 					</div>
 					<span class="text-lg font-semibold">Admin</span>
 				</div>
-				<p class="mb-6 text-sm text-gray-400">Enter your API token to continue.</p>
+				<p class="mb-6 text-sm text-gray-400">Connect to your Pi webserver.</p>
 				<form onsubmit={(e) => { e.preventDefault(); login(); }}>
+					<label class="block text-xs text-gray-500 mb-1">API endpoint</label>
+					<input
+						type="url"
+						bind:value={endpointInput}
+						placeholder="https://api.example.com"
+						class="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-gray-200 placeholder-gray-500 outline-none focus:border-teal-500/50"
+					/>
+					<label class="mt-3 block text-xs text-gray-500 mb-1">API token</label>
 					<input
 						type="password"
 						bind:value={tokenInput}
@@ -71,7 +85,8 @@
 					/>
 					<button
 						type="submit"
-						class="mt-4 w-full rounded-lg bg-teal-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-teal-500"
+						disabled={!endpointInput.trim() || !tokenInput.trim()}
+						class="mt-4 w-full rounded-lg bg-teal-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-teal-500 disabled:opacity-50"
 					>
 						Connect
 					</button>

@@ -1,6 +1,20 @@
-const API_BASE = 'https://api.aivena.dev';
-
+let apiBase: string | null = null;
 let apiToken: string | null = null;
+
+export function setApiEndpoint(endpoint: string) {
+	apiBase = endpoint.replace(/\/+$/, '');
+	if (typeof localStorage !== 'undefined') {
+		localStorage.setItem('aivena-api-endpoint', apiBase);
+	}
+}
+
+export function getApiEndpoint(): string | null {
+	if (apiBase) return apiBase;
+	if (typeof localStorage !== 'undefined') {
+		apiBase = localStorage.getItem('aivena-api-endpoint');
+	}
+	return apiBase;
+}
 
 export function setApiToken(token: string) {
 	apiToken = token;
@@ -17,14 +31,23 @@ export function getApiToken(): string | null {
 	return apiToken;
 }
 
-export function clearApiToken() {
+export function clearSession() {
+	apiBase = null;
 	apiToken = null;
 	if (typeof localStorage !== 'undefined') {
+		localStorage.removeItem('aivena-api-endpoint');
 		localStorage.removeItem('aivena-api-token');
 	}
 }
 
+export function isConnected(): boolean {
+	return !!getApiEndpoint() && !!getApiToken();
+}
+
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
+	const base = getApiEndpoint();
+	if (!base) throw new Error('API endpoint not configured');
+
 	const token = getApiToken();
 	const headers: Record<string, string> = {
 		'Content-Type': 'application/json',
@@ -34,7 +57,7 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
 		headers['Authorization'] = `Bearer ${token}`;
 	}
 
-	const res = await fetch(`${API_BASE}${path}`, { ...options, headers });
+	const res = await fetch(`${base}${path}`, { ...options, headers });
 
 	if (!res.ok) {
 		const text = await res.text().catch(() => '');
