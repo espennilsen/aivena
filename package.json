@@ -1,0 +1,10 @@
+{
+  "name": "aivena",
+  "version": "0.3.0",
+  "description": "Aivena — personal AI assistant powered by Pi",
+  "private": true,
+  "scripts": {
+    "start": "cd workspace && pi",
+    "tui": "cd workspace && pi"
+  }
+}

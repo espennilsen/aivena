@@ -1,0 +1,13 @@
+.env
+workspace/
+.workspace/
+*.db
+*.db-wal
+*.db-shm
+node_modules/
+package-lock.json
+.DS_Store
+.todos/
+.sidecar/
+.claude/
+memory/

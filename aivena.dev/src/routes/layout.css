@@ -1,0 +1,84 @@
+@import 'tailwindcss';
+@plugin '@tailwindcss/typography';
+
+@theme {
+  --color-surface: #0a0a12;
+  --color-surface-raised: #12121e;
+  --color-surface-overlay: #1a1a2e;
+  --color-border-subtle: #ffffff0d;
+  --color-accent: #5eead4;
+  --color-accent-dim: #14b8a6;
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'SF Mono', ui-monospace, monospace;
+}
+
+::selection {
+  background: #5eead433;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Glow effect for hero */
+.glow {
+  background: radial-gradient(
+    ellipse 600px 400px at 50% 0%,
+    #14b8a615,
+    transparent
+  );
+}
+
+/* Prose overrides for docs */
+.prose pre {
+  background: #12121e !important;
+  border: 1px solid #ffffff0d;
+}
+
+.prose code:not(pre code) {
+  background: #ffffff0d;
+  padding: 0.15em 0.4em;
+  border-radius: 0.25rem;
+  font-size: 0.875em;
+}
+
+.prose a {
+  color: #5eead4;
+  text-decoration: none;
+}
+.prose a:hover {
+  text-decoration: underline;
+}
+
+/* Terminal window effect */
+.terminal {
+  background: #12121e;
+  border: 1px solid #ffffff10;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+.terminal-header {
+  background: #0f0f1a;
+  padding: 0.75rem 1rem;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+.terminal-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+.terminal-body {
+  padding: 1.25rem;
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  line-height: 1.7;
+  overflow-x: auto;
+}
+
+pre.terminal-body {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0;
+  white-space: pre;
+}
