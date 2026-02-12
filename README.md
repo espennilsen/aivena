@@ -21,12 +21,6 @@ npm start       # TUI (cd workspace && pi)
 npm run tui     # TUI (same)
 ```
 
-To enable the Telegram chat bridge, start pi with `--chat-bridge`:
-
-```bash
-cd workspace && pi --chat-bridge
-```
-
 ## Project Structure
 
 ```
