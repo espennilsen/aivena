@@ -38,7 +38,7 @@
 			<a href="/docs" class="text-sm text-gray-400 transition hover:text-white">Docs</a>
 			<a href="/blog" class="text-sm text-gray-400 transition hover:text-white">Blog</a>
 			<a
-				href="https://github.com/espennilsen/pi/tree/main/extensions"
+				href="https://github.com/espennilsen/aivena"
 				target="_blank"
 				rel="noopener"
 				class="inline-flex items-center gap-1.5 rounded-lg border border-white/10 px-4 py-2 text-sm text-gray-300 transition hover:border-teal-500/50 hover:text-white"
@@ -99,7 +99,7 @@
 					onclick={() => (mobileMenuOpen = false)}>Blog</a
 				>
 				<a
-					href="https://github.com/espennilsen/pi/tree/main/extensions"
+					href="https://github.com/espennilsen/aivena"
 					target="_blank"
 					rel="noopener"
 					class="text-sm text-gray-400 hover:text-white">GitHub</a
