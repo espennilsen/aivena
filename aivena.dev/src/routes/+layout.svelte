@@ -1,6 +1,6 @@
 <script lang="ts">
 	import './layout.css';
-	import favicon from '$lib/assets/favicon.svg';
+	import icon from '$lib/assets/icon.png';
 
 	let { children } = $props();
 
@@ -8,7 +8,7 @@
 </script>
 
 <svelte:head>
-	<link rel="icon" href={favicon} />
+	<link rel="icon" href={icon} />
 	<link rel="preconnect" href="https://fonts.googleapis.com" />
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
 	<link
@@ -21,11 +21,7 @@
 <nav class="fixed top-0 z-50 w-full border-b border-white/5 bg-[#0a0a12]/80 backdrop-blur-xl">
 	<div class="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
 		<a href="/" class="flex items-center gap-2.5 text-lg font-semibold tracking-tight">
-			<div
-				class="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-teal-400 to-teal-600 text-sm font-bold text-white"
-			>
-				A
-			</div>
+			<img src={icon} alt="Aivena" class="h-8 w-8 rounded-lg" />
 			<span>Aivena</span>
 		</a>
 
@@ -131,11 +127,7 @@
 	<div class="mx-auto max-w-6xl px-6 py-12">
 		<div class="flex flex-col items-center justify-between gap-6 sm:flex-row">
 			<div class="flex items-center gap-2.5">
-				<div
-					class="flex h-7 w-7 items-center justify-center rounded-md bg-gradient-to-br from-teal-400 to-teal-600 text-xs font-bold text-white"
-				>
-					A
-				</div>
+				<img src={icon} alt="Aivena" class="h-7 w-7 rounded-md" />
 				<span class="text-sm font-medium text-gray-400">Aivena</span>
 			</div>
 			<div class="flex items-center gap-6 text-sm text-gray-500">
