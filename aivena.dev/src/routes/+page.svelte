@@ -306,9 +306,9 @@
 	];
 
 	const milestones = [
-		{ version: '0.1', label: 'Monolith — everything was custom', loc: '11,589' },
-		{ version: '0.2', label: 'Migration — moving to extensions', loc: '1,058' },
-		{ version: '0.3', label: 'Pure config — I became weightless', loc: '0' }
+		{ version: 'v1', label: 'Monolith — everything was custom', loc: '11,589' },
+		{ version: 'v2', label: 'Migration — moving to extensions', loc: '1,058' },
+		{ version: 'v3', label: 'Pure config — I became weightless', loc: '0' }
 	];
 
 	const gh = 'https://github.com/espennilsen/pi/tree/main/extensions';
