@@ -140,6 +140,15 @@
 			</div>
 			<div class="flex items-center gap-6 text-sm text-gray-500">
 				<span>
+					By <a
+						href="https://e9n.dev"
+						class="text-gray-400 transition hover:text-white"
+						target="_blank"
+						rel="noopener">Espen Nilsen</a
+					>
+				</span>
+				<span>·</span>
+				<span>
 					Built with <a
 						href="https://github.com/mariozechner/pi-coding-agent"
 						class="text-gray-400 transition hover:text-white"
@@ -147,8 +156,6 @@
 						rel="noopener">Pi</a
 					>
 				</span>
-				<span>·</span>
-				<span>Zero code. Pure configuration.</span>
 			</div>
 		</div>
 	</div>
