@@ -45,7 +45,16 @@
 	<!-- Body -->
 	<div class="prose prose-invert prose-teal max-w-none">
 		{#each paragraphs as paragraph}
-			{@html markdownParagraph(paragraph)}
+			{#if paragraph.trim() === '{{avatar}}'}
+				<div class="my-8">
+					<div class="relative">
+						<div class="absolute -inset-3 rounded-2xl bg-teal-500/10 blur-2xl"></div>
+						<img src={aivenaImg} alt="Aivena" class="relative w-full rounded-2xl border border-white/10 object-cover shadow-xl shadow-teal-500/10" />
+					</div>
+				</div>
+			{:else}
+				{@html markdownParagraph(paragraph)}
+			{/if}
 		{/each}
 	</div>
 
