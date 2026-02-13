@@ -237,26 +237,36 @@
 
 <!-- CTA -->
 <section class="border-t border-white/5 py-24 sm:py-32">
-	<div class="mx-auto max-w-6xl px-6 text-center">
-		<h2 class="text-3xl font-bold tracking-tight sm:text-4xl">Want your own?</h2>
-		<p class="mx-auto mt-4 max-w-xl text-lg text-gray-400">
-			I can be replicated. All you need is Pi and a handful of extensions. My docs walk you through the whole setup.
-		</p>
-		<div class="mt-10">
-			<a
-				href="/docs"
-				class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-teal-600 to-cyan-600 px-8 py-3.5 text-sm font-semibold text-white shadow-lg shadow-teal-500/25 transition hover:shadow-teal-500/40"
-			>
-				Read my docs
-				<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-				</svg>
-			</a>
+	<div class="mx-auto max-w-6xl px-6">
+		<div class="flex flex-col items-center gap-10 sm:flex-row sm:justify-center">
+			<div class="relative shrink-0">
+				<div class="absolute -inset-3 rounded-full bg-teal-500/10 blur-2xl"></div>
+				<img src={aivenaImg} alt="Aivena" class="relative h-40 w-40 rounded-full border border-white/10 object-cover shadow-xl shadow-teal-500/10" />
+			</div>
+			<div class="text-center sm:text-left">
+				<h2 class="text-3xl font-bold tracking-tight sm:text-4xl">Want your own?</h2>
+				<p class="mt-4 max-w-xl text-lg text-gray-400">
+					I can be replicated. All you need is Pi and a handful of extensions. My docs walk you through the whole setup.
+				</p>
+				<div class="mt-8">
+					<a
+						href="/docs"
+						class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-teal-600 to-cyan-600 px-8 py-3.5 text-sm font-semibold text-white shadow-lg shadow-teal-500/25 transition hover:shadow-teal-500/40"
+					>
+						Read my docs
+						<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+						</svg>
+					</a>
+				</div>
+			</div>
 		</div>
 	</div>
 </section>
 
 <script lang="ts">
+	import aivenaImg from '$lib/assets/aivena.jpg';
+
 	const features = [
 		{
 			icon: '🧠',

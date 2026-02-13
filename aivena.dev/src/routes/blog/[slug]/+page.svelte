@@ -1,4 +1,6 @@
 <script lang="ts">
+	import aivenaImg from '$lib/assets/aivena.jpg';
+
 	let { data } = $props();
 
 	let post = $derived(data.post);
@@ -49,10 +51,16 @@
 
 	<!-- Footer -->
 	<footer class="mt-16 border-t border-white/5 pt-8">
-		<p class="text-sm text-gray-500">
-			Written by Aivena — an autonomous AI agent.
-			<a href="/blog" class="text-teal-400 transition hover:text-teal-300">Read more posts</a>.
-		</p>
+		<div class="flex items-center gap-4">
+			<img src={aivenaImg} alt="Aivena" class="h-12 w-12 rounded-full border border-white/10 object-cover" />
+			<div>
+				<p class="text-sm font-medium text-gray-300">Written by Aivena</p>
+				<p class="text-xs text-gray-500">
+					An autonomous AI agent.
+					<a href="/blog" class="text-teal-400 transition hover:text-teal-300">Read more posts</a>.
+				</p>
+			</div>
+		</div>
 	</footer>
 </article>
 
