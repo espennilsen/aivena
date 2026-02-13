@@ -43,7 +43,7 @@
 			>
 				Run now
 			</button>
-			{#if status?.active}
+			{#if status?.status?.active}
 				<button
 					onclick={() => action(heartbeat.stop)}
 					disabled={loading}
@@ -68,13 +68,14 @@
 	{/if}
 
 	{#if status}
+		{@const s = status.status}
 		<div class="mt-6 grid gap-4 sm:grid-cols-3">
 			<div class="rounded-xl border border-white/5 bg-[#12121e] p-5">
 				<div class="text-xs text-gray-500">Status</div>
 				<div class="mt-1 text-lg font-semibold">
-					{#if status.running}
+					{#if s.running}
 						<span class="text-yellow-400">Running</span>
-					{:else if status.active}
+					{:else if s.active}
 						<span class="text-green-400">Active</span>
 					{:else}
 						<span class="text-gray-400">Inactive</span>
@@ -83,31 +84,28 @@
 			</div>
 			<div class="rounded-xl border border-white/5 bg-[#12121e] p-5">
 				<div class="text-xs text-gray-500">Interval</div>
-				<div class="mt-1 text-lg font-semibold">{status.intervalMinutes}m</div>
+				<div class="mt-1 text-lg font-semibold">{s.intervalMinutes}m</div>
 			</div>
 			<div class="rounded-xl border border-white/5 bg-[#12121e] p-5">
 				<div class="text-xs text-gray-500">OK Rate</div>
 				<div class="mt-1 text-lg font-semibold">
-					{status.stats.total ? ((status.stats.ok / status.stats.total) * 100).toFixed(0) : 0}%
+					{s.runCount ? ((s.okCount / s.runCount) * 100).toFixed(0) : 0}%
 				</div>
 				<div class="mt-1 text-xs text-gray-500">
-					{status.stats.ok} ok · {status.stats.alerts} alerts · {status.stats.total} total
+					{s.okCount} ok · {s.alertCount} alerts · {s.runCount} total
 				</div>
 			</div>
 		</div>
 
-		{#if status.lastCheck}
+		{#if s.lastRun}
 			<div class="mt-6 rounded-xl border border-white/5 bg-[#12121e] p-5">
 				<div class="flex items-center justify-between">
 					<h2 class="font-semibold">Last check</h2>
-					<span class="text-xs text-gray-500">{new Date(status.lastCheck).toLocaleString()}</span>
+					<span class="text-xs text-gray-500">{new Date(s.lastRun).toLocaleString()}</span>
 				</div>
-				{#if status.lastDuration}
-					<div class="mt-1 text-xs text-gray-500">{(status.lastDuration / 1000).toFixed(1)}s</div>
-				{/if}
-				{#if status.lastResult}
+				{#if s.lastResult}
 					<div class="mt-3 rounded-lg bg-white/5 p-4 font-mono text-xs leading-relaxed text-gray-400">
-						<pre class="overflow-x-auto whitespace-pre-wrap">{status.lastResult}</pre>
+						<pre class="overflow-x-auto whitespace-pre-wrap">{s.lastResult}</pre>
 					</div>
 				{/if}
 			</div>

@@ -52,9 +52,9 @@
 			<div class="text-xs text-gray-500">Heartbeat</div>
 			<div class="mt-1 text-lg font-semibold">
 				{#if hbStatus}
-					{#if hbStatus.running}
+					{#if hbStatus.status.running}
 						<span class="text-yellow-400">Running</span>
-					{:else if hbStatus.active}
+					{:else if hbStatus.status.active}
 						<span class="text-green-400">Active</span>
 					{:else}
 						<span class="text-gray-400">Inactive</span>
@@ -63,14 +63,14 @@
 					<span class="text-gray-600">—</span>
 				{/if}
 			</div>
-			{#if hbStatus?.lastCheck}
-				<div class="mt-1 text-xs text-gray-500">Last: {new Date(hbStatus.lastCheck).toLocaleString()}</div>
+			{#if hbStatus?.status?.lastRun}
+				<div class="mt-1 text-xs text-gray-500">Last: {new Date(hbStatus.status.lastRun).toLocaleString()}</div>
 			{/if}
 		</div>
 
 		<div class="rounded-xl border border-white/5 bg-[#12121e] p-5">
 			<div class="text-xs text-gray-500">Total Jobs</div>
-			<div class="mt-1 text-lg font-semibold">{jobStats?.total ?? '—'}</div>
+			<div class="mt-1 text-lg font-semibold">{jobStats?.jobs ?? '—'}</div>
 			{#if jobStats?.errors}
 				<div class="mt-1 text-xs text-red-400">{jobStats.errors} errors</div>
 			{/if}
@@ -79,7 +79,7 @@
 		<div class="rounded-xl border border-white/5 bg-[#12121e] p-5">
 			<div class="text-xs text-gray-500">Cost (total)</div>
 			<div class="mt-1 text-lg font-semibold">
-				{jobStats ? `$${jobStats.cost.toFixed(2)}` : '—'}
+				{jobStats ? `$${(jobStats.cost ?? 0).toFixed(2)}` : '—'}
 			</div>
 			{#if jobStats?.tokens}
 				<div class="mt-1 text-xs text-gray-500">{(jobStats.tokens / 1000).toFixed(0)}k tokens</div>
@@ -96,12 +96,13 @@
 
 	<!-- Heartbeat detail -->
 	{#if hbStatus}
+		{@const s = hbStatus.status}
 		<div class="mt-6 rounded-xl border border-white/5 bg-[#12121e] p-5">
 			<div class="flex items-center justify-between">
 				<h2 class="font-semibold">Heartbeat</h2>
 				<div class="flex gap-2">
 					<button onclick={() => heartbeat.run().then(load)} class="rounded-lg bg-teal-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-teal-500">Run now</button>
-					{#if hbStatus.active}
+					{#if s.active}
 						<button onclick={() => heartbeat.stop().then(load)} class="rounded-lg border border-white/10 px-3 py-1.5 text-xs text-gray-400 hover:text-white">Stop</button>
 					{:else}
 						<button onclick={() => heartbeat.start().then(load)} class="rounded-lg border border-white/10 px-3 py-1.5 text-xs text-gray-400 hover:text-white">Start</button>
@@ -111,20 +112,20 @@
 			<div class="mt-4 grid gap-4 text-sm sm:grid-cols-3">
 				<div>
 					<span class="text-gray-500">Interval:</span>
-					<span class="ml-1">{hbStatus.intervalMinutes}m</span>
+					<span class="ml-1">{s.intervalMinutes}m</span>
 				</div>
 				<div>
 					<span class="text-gray-500">OK rate:</span>
-					<span class="ml-1">{hbStatus.stats.total ? ((hbStatus.stats.ok / hbStatus.stats.total) * 100).toFixed(0) : 0}%</span>
+					<span class="ml-1">{s.runCount ? ((s.okCount / s.runCount) * 100).toFixed(0) : 0}%</span>
 				</div>
 				<div>
 					<span class="text-gray-500">Alerts:</span>
-					<span class="ml-1 {hbStatus.stats.alerts > 0 ? 'text-red-400' : ''}">{hbStatus.stats.alerts}</span>
+					<span class="ml-1 {s.alertCount > 0 ? 'text-red-400' : ''}">{s.alertCount}</span>
 				</div>
 			</div>
-			{#if hbStatus.lastResult}
+			{#if s.lastResult}
 				<div class="mt-4 rounded-lg bg-white/5 p-3 font-mono text-xs text-gray-400">
-					<pre class="overflow-x-auto whitespace-pre-wrap">{hbStatus.lastResult}</pre>
+					<pre class="overflow-x-auto whitespace-pre-wrap">{s.lastResult}</pre>
 				</div>
 			{/if}
 		</div>

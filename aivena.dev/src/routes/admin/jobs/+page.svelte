@@ -37,7 +37,7 @@
 		<div class="mt-6 grid gap-4 sm:grid-cols-4">
 			<div class="rounded-xl border border-white/5 bg-[#12121e] p-5">
 				<div class="text-xs text-gray-500">Total runs</div>
-				<div class="mt-1 text-lg font-semibold">{stats.total}</div>
+				<div class="mt-1 text-lg font-semibold">{stats.jobs}</div>
 			</div>
 			<div class="rounded-xl border border-white/5 bg-[#12121e] p-5">
 				<div class="text-xs text-gray-500">Errors</div>
@@ -45,11 +45,11 @@
 			</div>
 			<div class="rounded-xl border border-white/5 bg-[#12121e] p-5">
 				<div class="text-xs text-gray-500">Tokens</div>
-				<div class="mt-1 text-lg font-semibold">{(stats.tokens / 1000).toFixed(0)}k</div>
+				<div class="mt-1 text-lg font-semibold">{stats.tokens ? (stats.tokens / 1000).toFixed(0) + 'k' : '0'}</div>
 			</div>
 			<div class="rounded-xl border border-white/5 bg-[#12121e] p-5">
 				<div class="text-xs text-gray-500">Cost</div>
-				<div class="mt-1 text-lg font-semibold">${stats.cost.toFixed(2)}</div>
+				<div class="mt-1 text-lg font-semibold">${(stats.cost ?? 0).toFixed(2)}</div>
 			</div>
 		</div>
 	{/if}
@@ -62,8 +62,8 @@
 				{#each models as model}
 					{@const m = model as Record<string, unknown>}
 					<div class="flex items-center justify-between text-sm">
-						<span class="font-mono text-gray-300">{m.model}</span>
-						<span class="text-gray-500">{m.count} runs · ${Number(m.cost ?? 0).toFixed(2)}</span>
+						<span class="font-mono text-gray-300">{m.model ?? 'unknown'}</span>
+						<span class="text-gray-500">{m.job_count} runs · ${Number(m.cost_total ?? 0).toFixed(2)}</span>
 					</div>
 				{/each}
 			</div>
@@ -95,13 +95,13 @@
 								<td class="px-5 py-2.5">
 									<span class="rounded-full bg-white/5 px-2 py-0.5 text-xs">{job.channel}</span>
 								</td>
-								<td class="px-5 py-2.5 font-mono text-xs text-gray-400">{job.model}</td>
+								<td class="px-5 py-2.5 font-mono text-xs text-gray-400">{job.model ?? '—'}</td>
 								<td class="px-5 py-2.5">
 									<span class="text-xs {job.status === 'error' ? 'text-red-400' : 'text-green-400'}">{job.status}</span>
 								</td>
-								<td class="px-5 py-2.5 text-right text-gray-400">{(job.input_tokens + job.output_tokens).toLocaleString()}</td>
-								<td class="px-5 py-2.5 text-right text-gray-400">${job.cost.toFixed(3)}</td>
-								<td class="px-5 py-2.5 text-right text-gray-400">{(job.duration_ms / 1000).toFixed(1)}s</td>
+								<td class="px-5 py-2.5 text-right text-gray-400">{(job.total_tokens ?? 0).toLocaleString()}</td>
+								<td class="px-5 py-2.5 text-right text-gray-400">${(job.cost_total ?? 0).toFixed(3)}</td>
+								<td class="px-5 py-2.5 text-right text-gray-400">{job.duration_ms ? (job.duration_ms / 1000).toFixed(1) + 's' : '—'}</td>
 								<td class="px-5 py-2.5 text-xs text-gray-500">{new Date(job.created_at).toLocaleString()}</td>
 							</tr>
 						{/each}

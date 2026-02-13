@@ -69,55 +69,65 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
 
 // ── Heartbeat ──────────────────────────────────────────
 export interface HeartbeatStatus {
-	active: boolean;
-	running: boolean;
-	intervalMinutes: number;
-	lastCheck: string | null;
-	lastResult: string | null;
-	lastDuration: number | null;
-	stats: { total: number; ok: number; alerts: number };
+	status: {
+		active: boolean;
+		running: boolean;
+		intervalMinutes: number;
+		lastRun: string | null;
+		lastResult: string | null;
+		runCount: number;
+		okCount: number;
+		alertCount: number;
+	};
+	history: unknown[];
 }
 
 export const heartbeat = {
-	status: () => request<HeartbeatStatus>('/api/heartbeat'),
-	start: () => request('/api/heartbeat', { method: 'POST', body: JSON.stringify({ action: 'start' }) }),
-	stop: () => request('/api/heartbeat', { method: 'POST', body: JSON.stringify({ action: 'stop' }) }),
-	run: () => request('/api/heartbeat', { method: 'POST', body: JSON.stringify({ action: 'run' }) })
+	status: () => request<HeartbeatStatus>('/heartbeat'),
+	start: () => request('/heartbeat', { method: 'POST', body: JSON.stringify({ action: 'start' }) }),
+	stop: () => request('/heartbeat', { method: 'POST', body: JSON.stringify({ action: 'stop' }) }),
+	run: () => request('/heartbeat', { method: 'POST', body: JSON.stringify({ action: 'run' }) })
 };
 
 // ── Jobs / Telemetry ───────────────────────────────────
 export interface JobStats {
-	total: number;
+	jobs: number;
 	errors: number;
 	tokens: number;
 	cost: number;
+	toolCalls: number;
+	avgDurationMs: number;
 }
 
 export interface RecentJob {
-	id: number;
+	id: string;
 	channel: string;
 	status: string;
-	model: string;
+	prompt: string;
+	model: string | null;
+	provider: string | null;
 	input_tokens: number;
 	output_tokens: number;
-	cost: number;
-	duration_ms: number;
+	total_tokens: number;
+	cost_total: number;
+	tool_call_count: number;
+	duration_ms: number | null;
 	created_at: string;
 }
 
 export const jobs = {
 	stats: (channel?: string) =>
-		request<JobStats>(`/api/jobs/stats${channel ? `?channel=${channel}` : ''}`),
-	recent: (limit = 20) => request<RecentJob[]>(`/api/jobs/recent?limit=${limit}`),
-	models: () => request('/api/jobs/models'),
-	tools: () => request('/api/jobs/tools')
+		request<JobStats>(`/jobs/stats${channel ? `?channel=${channel}` : ''}`),
+	recent: (limit = 20) => request<RecentJob[]>(`/jobs/recent?limit=${limit}`),
+	models: () => request('/jobs/models'),
+	tools: () => request('/jobs/tools')
 };
 
 // ── Dashboard ──────────────────────────────────────────
 export const dashboard = {
-	config: () => request('/api/dashboard/config'),
+	config: () => request('/dashboard/config'),
 	prompt: (prompt: string) =>
-		request('/api/dashboard/prompt', {
+		request('/dashboard/prompt', {
 			method: 'POST',
 			body: JSON.stringify({ prompt })
 		})
@@ -136,13 +146,13 @@ export interface CalendarEvent {
 
 export const calendar = {
 	list: (start: string, end: string) =>
-		request<CalendarEvent[]>(`/api/calendar?start=${start}&end=${end}`),
+		request<CalendarEvent[]>(`/calendar?start=${start}&end=${end}`),
 	create: (event: Partial<CalendarEvent>) =>
-		request<CalendarEvent>('/api/calendar', { method: 'POST', body: JSON.stringify(event) }),
+		request<CalendarEvent>('/calendar', { method: 'POST', body: JSON.stringify(event) }),
 	update: (event: Partial<CalendarEvent> & { id: number }) =>
-		request<CalendarEvent>('/api/calendar', { method: 'PATCH', body: JSON.stringify(event) }),
+		request<CalendarEvent>('/calendar', { method: 'PATCH', body: JSON.stringify(event) }),
 	delete: (id: number) =>
-		request('/api/calendar', { method: 'DELETE', body: JSON.stringify({ id }) })
+		request('/calendar', { method: 'DELETE', body: JSON.stringify({ id }) })
 };
 
 // ── CRM ────────────────────────────────────────────────
@@ -166,15 +176,15 @@ export interface Company {
 }
 
 export const crm = {
-	contacts: (q?: string) => request<Contact[]>(`/api/crm/contacts${q ? `?q=${q}` : ''}`),
-	contact: (id: number) => request<Contact>(`/api/crm/contacts/${id}`),
-	companies: () => request<Company[]>('/api/crm/companies'),
-	upcoming: () => request('/api/crm/reminders/upcoming'),
-	interactions: () => request('/api/crm/interactions')
+	contacts: (q?: string) => request<Contact[]>(`/crm/contacts${q ? `?q=${q}` : ''}`),
+	contact: (id: number) => request<Contact>(`/crm/contacts/${id}`),
+	companies: () => request<Company[]>('/crm/companies'),
+	upcoming: () => request('/crm/reminders/upcoming'),
+	interactions: () => request('/crm/interactions')
 };
 
 // ── Tasks (td) ─────────────────────────────────────────
 export const td = {
-	issues: () => request('/api/td/'),
-	issue: (id: string) => request(`/api/td/${id}`)
+	issues: () => request('/td/'),
+	issue: (id: string) => request(`/td/${id}`)
 };
