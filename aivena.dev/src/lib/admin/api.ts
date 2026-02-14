@@ -332,11 +332,16 @@ export interface TdIssue {
 	priority: string;
 	type: string;
 	created_at: string;
+	updated_at?: string;
 	labels?: string[];
 	tags?: string[];
 	parent?: string;
+	parent_id?: string;
+	project?: string;
+	implementer_session?: string;
 	log_count?: number;
 	has_handoff?: boolean;
+	points?: number;
 	last_log?: { message: string; type: string; timestamp: string } | null;
 }
 
@@ -344,32 +349,83 @@ export interface TdIssueDetail {
 	id: string;
 	title: string;
 	description: string;
+	acceptance?: string;
 	status: string;
 	priority: string;
 	type: string;
 	labels: string[];
 	created_at: string;
+	updated_at?: string;
 	parent?: string;
+	parent_id?: string;
 	children?: string[];
+	implementer_session?: string;
+	points?: number;
 	logs: { message: string; type: string; timestamp: string }[];
 	handoff?: {
 		done?: string[];
 		remaining?: string[];
 		decisions?: string[];
 		uncertain?: string[];
+		session?: string;
+		timestamp?: string;
 	};
+	git?: {
+		start_branch?: string;
+		current_branch?: string;
+		start_commit?: string;
+		current_commit?: string;
+		commits_since_start?: number;
+		files_changed?: number;
+		additions?: number;
+		deletions?: number;
+	};
+	sessions?: { session_id: string; role?: string }[];
+}
+
+export interface TdTreeNode {
+	id: string;
+	title: string;
+	status: string;
+	priority: string;
+	type: string;
+	labels?: string[];
+	implementer_session?: string;
+}
+
+export interface TdTreeEdge {
+	source: string;
+	target: string;
+	type: string;
+}
+
+export interface TdTree {
+	nodes: TdTreeNode[];
+	edges: TdTreeEdge[];
 }
 
 export const td = {
-	issues: (params?: { type?: string; priority?: string; all?: boolean }) => {
+	issues: (params?: { type?: string; priority?: string; all?: boolean; implementer?: string }) => {
 		const p = new URLSearchParams();
 		if (params?.type) p.set('type', params.type);
 		if (params?.priority) p.set('priority', params.priority);
 		if (params?.all) p.set('all', '1');
+		if (params?.implementer) p.set('implementer', params.implementer);
 		const qs = p.toString();
 		return request<TdIssue[]>(`/td/${qs ? `?${qs}` : ''}`);
 	},
 	detail: (id: string) => request<TdIssueDetail>(`/td/detail?id=${id}`),
+	tree: () => request<TdTree>('/td/tree'),
+	config: () => request<{ crossProjectEnabled?: boolean; crossProjectDepth?: number }>('/td/config'),
+	global: (params?: { type?: string; priority?: string; all?: boolean; project?: string; implementer?: string }) => {
+		const p = new URLSearchParams();
+		if (params?.type) p.set('type', params.type);
+		if (params?.priority) p.set('priority', params.priority);
+		if (params?.all) p.set('all', '1');
+		if (params?.project) p.set('project', params.project);
+		if (params?.implementer) p.set('implementer', params.implementer);
+		return request<{ issues: TdIssue[]; projects: string[] }>(`/td/global?${p}`);
+	},
 	create: (data: { title: string; type?: string; priority?: string; description?: string; labels?: string; parent?: string }) =>
 		request('/td/', { method: 'POST', body: JSON.stringify(data) }),
 	update: (data: { id: string; status?: string; title?: string; priority?: string; description?: string; labels?: string }) =>
