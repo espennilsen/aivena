@@ -173,7 +173,7 @@
 		{ name: 'pi-webserver', icon: '🌐', desc: 'HTTP server for all web extensions', url: `${gh}/pi-webserver` },
 		{ name: 'pi-web-dashboard', icon: '📊', desc: 'Browser dashboard home page', url: `${gh}/pi-web-dashboard`, depends: ['pi-webserver'] },
 		{ name: 'pi-webnav', icon: '🧭', desc: 'Navigation bar for web UI', url: `${gh}/pi-webnav`, depends: ['pi-webserver'] },
-		{ name: 'pi-td-webui', icon: '📋', desc: 'Task management web interface', url: `${gh}/pi-td-webui`, depends: ['pi-webserver'] }
+		{ name: 'pi-td', icon: '📋', desc: 'Task management web interface', url: `${gh}/pi-td`, depends: ['pi-webserver'] }
 	];
 
 	const core: ExtItem[] = [

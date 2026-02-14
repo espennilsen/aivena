@@ -307,7 +307,7 @@ description: Personal AI assistant
 
 			<h3 class="mt-8">Web UI (optional)</h3>
 			<p>
-				Add <code>pi-webserver</code> and the web extensions (<code>pi-web-dashboard</code>, <code>pi-td-webui</code>, etc.) for a browser-based dashboard with task management, heartbeat status, and more. Runs on <code>localhost</code> alongside the TUI.
+				Add <code>pi-webserver</code> and the web extensions (<code>pi-web-dashboard</code>, <code>pi-td</code>, etc.) for a browser-based dashboard with task management, heartbeat status, and more. Runs on <code>localhost</code> alongside the TUI.
 			</p>
 		</section>
 
@@ -413,7 +413,7 @@ description: Personal AI assistant
 	const utilityExtensions = [
 		{ name: 'pi-personal-crm', purpose: 'Contacts, companies, interactions', config: 'None', url: `${gh}/pi-personal-crm` },
 		{ name: 'pi-calendar', purpose: 'Events, reminders, recurrence', config: 'None', url: `${gh}/pi-calendar` },
-		{ name: 'pi-td-webui', purpose: 'Task management web UI', config: 'Cross-project root dir', url: `${gh}/pi-td-webui` },
+		{ name: 'pi-td', purpose: 'Task management web UI', config: 'Cross-project root dir', url: `${gh}/pi-td` },
 		{ name: 'pi-web-dashboard', purpose: 'Dashboard home page', config: 'None', url: `${gh}/pi-web-dashboard` },
 		{ name: 'pi-webnav', purpose: 'Navigation bar for web extensions', config: 'None', url: `${gh}/pi-webnav` },
 		{ name: 'pi-projects', purpose: 'Git project scanning + tracking', config: 'Dev directory path', url: `${gh}/pi-projects` },

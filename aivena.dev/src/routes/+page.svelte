@@ -330,7 +330,7 @@
 		{ name: 'pi-cron', desc: 'Scheduled background jobs', url: `${gh}/pi-cron` },
 		{ name: 'pi-heartbeat', desc: 'Periodic health checks', url: `${gh}/pi-heartbeat` },
 		{ name: 'pi-webserver', desc: 'Shared HTTP server', url: `${gh}/pi-webserver` },
-		{ name: 'pi-td-webui', desc: 'Task management web UI', url: `${gh}/pi-td-webui` },
+		{ name: 'pi-td', desc: 'Task management web UI', url: `${gh}/pi-td` },
 		{ name: 'pi-web-dashboard', desc: 'Dashboard home page', url: `${gh}/pi-web-dashboard` },
 		{ name: 'pi-jobs', desc: 'Agent run telemetry', url: `${gh}/pi-jobs` },
 		{ name: 'pi-projects', desc: 'Git project scanning', url: `${gh}/pi-projects` },
