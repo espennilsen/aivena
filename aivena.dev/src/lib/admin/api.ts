@@ -60,6 +60,13 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
 	const res = await fetch(`${base}${path}`, { ...options, headers });
 
 	if (!res.ok) {
+		if (res.status === 401) {
+			clearSession();
+			if (typeof window !== 'undefined') {
+				window.location.reload();
+			}
+			throw new Error('Session expired — redirecting to login');
+		}
 		const text = await res.text().catch(() => '');
 		throw new Error(`API ${res.status}: ${text || res.statusText}`);
 	}
