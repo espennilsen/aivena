@@ -14,10 +14,15 @@ interface Frontmatter {
 	tags: string[];
 }
 
-function parseFrontmatter(raw: string): { frontmatter: Frontmatter; content: string } {
-	const match = raw.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
+function parseFrontmatter(
+	raw: string,
+	filepath?: string
+): { frontmatter: Frontmatter; content: string } {
+	// Normalize CRLF to LF so the regex works on Windows-edited files
+	const normalized = raw.replace(/\r\n/g, '\n');
+	const match = normalized.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
 	if (!match) {
-		throw new Error('Invalid frontmatter');
+		throw new Error(`Invalid frontmatter${filepath ? ` in ${filepath}` : ''}`);
 	}
 
 	const yaml = match[1];
@@ -32,6 +37,17 @@ function parseFrontmatter(raw: string): { frontmatter: Frontmatter; content: str
 		.map((t) => t.trim())
 		.filter(Boolean);
 
+	const missing = [
+		!title && 'title',
+		!date && 'date',
+		!excerpt && 'excerpt'
+	].filter(Boolean);
+	if (missing.length > 0) {
+		throw new Error(
+			`Missing required frontmatter field(s): ${missing.join(', ')}${filepath ? ` in ${filepath}` : ''}`
+		);
+	}
+
 	return {
 		frontmatter: { title, date, excerpt, tags },
 		content
@@ -42,7 +58,7 @@ const markdownFiles = import.meta.glob('/blog/*.md', { eager: true, query: '?raw
 
 export const posts: Post[] = Object.entries(markdownFiles)
 	.map(([filepath, raw]) => {
-		const { frontmatter, content } = parseFrontmatter(raw);
+		const { frontmatter, content } = parseFrontmatter(raw, filepath);
 		// Extract slug from filename: /blog/YYYY-MM-DD-slug.md → slug
 		const filename = filepath.split('/').pop()!.replace(/\.md$/, '');
 		const slug = filename.replace(/^\d{4}-\d{2}-\d{2}-/, '');
