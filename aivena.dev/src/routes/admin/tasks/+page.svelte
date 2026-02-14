@@ -631,8 +631,8 @@
 			{/if}
 
 			<!-- Dependencies -->
-			{#if getTreeDeps(detail.id).upstream.length > 0 || getTreeDeps(detail.id).downstream.length > 0}
-				{@const deps = getTreeDeps(detail.id)}
+			{#each [getTreeDeps(detail.id)] as deps}
+			{#if deps.upstream.length > 0 || deps.downstream.length > 0}
 				<div class="mb-4">
 					<h4 class="text-[11px] font-bold uppercase tracking-wider text-gray-500 mb-2">🔗 Dependencies</h4>
 					<div class="flex gap-4 flex-wrap">
@@ -665,6 +665,7 @@
 					</div>
 				</div>
 			{/if}
+			{/each}
 
 			<!-- Handoff -->
 			{#if detail.handoff && (detail.handoff.done?.length || detail.handoff.remaining?.length || detail.handoff.decisions?.length || detail.handoff.uncertain?.length)}
