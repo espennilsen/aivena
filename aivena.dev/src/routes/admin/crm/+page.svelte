@@ -6,7 +6,8 @@
 	$effect(() => {
 		const base = getApiEndpoint();
 		if (base) {
-			crmUrl = base.replace(/\/+$/, '') + '/crm/';
+			// Extension UIs are mounted at /crm, not /api/crm
+			crmUrl = base.replace(/\/+$/, '').replace(/\/api$/, '') + '/crm/';
 		}
 	});
 </script>

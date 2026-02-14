@@ -6,7 +6,8 @@
 	$effect(() => {
 		const base = getApiEndpoint();
 		if (base) {
-			tasksUrl = base.replace(/\/+$/, '') + '/tasks/';
+			// Extension UIs are mounted at /tasks, not /api/tasks
+			tasksUrl = base.replace(/\/+$/, '').replace(/\/api$/, '') + '/tasks/';
 		}
 	});
 </script>
