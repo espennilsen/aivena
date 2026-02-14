@@ -320,7 +320,7 @@ export const crm = {
 		}).then(r => r.text());
 	},
 	importCsv: (csv: string) =>
-		request('/crm/contacts/import', { method: 'POST', body: csv })
+		request('/crm/contacts/import', { method: 'POST', body: csv, headers: { 'Content-Type': 'text/csv' } })
 };
 
 // ── Tasks (td) ─────────────────────────────────────────
@@ -359,6 +359,7 @@ export interface TdIssueDetail {
 	parent?: string;
 	parent_id?: string;
 	children?: string[];
+	project?: string;
 	implementer_session?: string;
 	points?: number;
 	logs: { message: string; type: string; timestamp: string }[];

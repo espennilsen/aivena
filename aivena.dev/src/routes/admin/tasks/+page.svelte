@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { td, type TdIssue, type TdIssueDetail, type TdTree, type TdTreeNode, type TdTreeEdge } from '$lib/admin/api';
+	import { td, type TdIssue, type TdIssueDetail, type TdTree, type TdTreeNode } from '$lib/admin/api';
 
 	// ── State ──────────────────────────────────────────────
 	let issues = $state<TdIssue[]>([]);
@@ -337,15 +337,15 @@
 	}
 
 	// ── Lifecycle ─────────────────────────────────────────
-	$effect(() => {
-		fetchConfig();
-		load();
-	});
+	let initialized = false;
 
-	// Reload on filter changes
 	$effect(() => {
-		// Access reactive vars to trigger
+		// Access reactive vars to trigger reload on filter changes
 		filterType; filterPriority; showClosed; filterImplementer; globalMode; filterProject;
+		if (!initialized) {
+			initialized = true;
+			fetchConfig();
+		}
 		load();
 	});
 </script>
