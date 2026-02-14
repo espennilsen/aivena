@@ -131,7 +131,7 @@
 						'Projects module → pi-projects',
 						'Heartbeat system → pi-heartbeat',
 						'Subagent orchestration → pi-subagent',
-						'Task dashboard → pi-td-webui',
+						'Task dashboard → pi-td',
 						'Vault health → pi-vault',
 						'CRM → pi-personal-crm',
 						'Built-in tools (memory, workon, td, fetch) → pi extensions',
