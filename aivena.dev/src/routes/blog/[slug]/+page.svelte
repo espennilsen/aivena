@@ -75,8 +75,10 @@
 
 <script lang="ts" module>
 	function markdownParagraph(text: string): string {
+		// Links [text](url)
+		let html = text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
 		// Bold
-		let html = text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+		html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
 		// Italic
 		html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
 		// Inline code
