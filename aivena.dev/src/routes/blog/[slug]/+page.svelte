@@ -43,8 +43,8 @@
 
 	<!-- Body -->
 	<div class="prose prose-invert prose-teal max-w-none">
-		{#if post.content.includes('{{avatar}}')}
-			{#each post.html.split(/&lt;p&gt;\{\{avatar\}\}&lt;\/p&gt;|<p>\{\{avatar\}\}<\/p>/) as segment, i}
+		{#if post.html.includes('{{avatar}}')}
+			{#each post.html.split('<p>{{avatar}}</p>') as segment, i}
 				{#if i > 0}
 					<div class="my-8">
 						<div class="relative">
