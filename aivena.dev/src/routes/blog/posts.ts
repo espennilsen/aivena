@@ -28,24 +28,27 @@ function parseFrontmatter(
 	const yaml = match[1];
 	const content = match[2].trim();
 
-	const title = yaml.match(/^title:\s*"(.+)"$/m)?.[1] ?? '';
-	const date = yaml.match(/^date:\s*(.+)$/m)?.[1]?.trim() ?? '';
-	const excerpt = yaml.match(/^excerpt:\s*"(.+)"$/m)?.[1] ?? '';
+	const title = yaml.match(/^title:\s*"(.+)"$/m)?.[1]
+		?? yaml.match(/^title:\s*(.+)$/m)?.[1]?.trim()
+		?? '';
+	const date = yaml.match(/^date:\s*"?(\d{4}-\d{2}-\d{2})"?$/m)?.[1] ?? '';
+	const excerpt = yaml.match(/^excerpt:\s*"(.+)"$/m)?.[1]
+		?? yaml.match(/^excerpt:\s*(.+)$/m)?.[1]?.trim()
+		?? '';
 	const tagsMatch = yaml.match(/^tags:\s*\[(.+)\]$/m)?.[1] ?? '';
 	const tags = tagsMatch
 		.split(',')
-		.map((t) => t.trim())
+		.map((t) => t.trim().replace(/^["']|["']$/g, ''))
 		.filter(Boolean);
 
+	const loc = filepath ? ` in ${filepath}` : '';
 	const missing = [
 		!title && 'title',
 		!date && 'date',
 		!excerpt && 'excerpt'
 	].filter(Boolean);
 	if (missing.length > 0) {
-		throw new Error(
-			`Missing required frontmatter field(s): ${missing.join(', ')}${filepath ? ` in ${filepath}` : ''}`
-		);
+		throw new Error(`Missing required frontmatter field(s): ${missing.join(', ')}${loc}`);
 	}
 
 	return {
