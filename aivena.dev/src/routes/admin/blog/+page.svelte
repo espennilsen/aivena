@@ -50,8 +50,8 @@
 	</div>
 
 	<p class="mt-2 text-sm text-gray-500">
-		Posts are stored in <code class="rounded bg-white/5 px-1.5 py-0.5 text-xs text-gray-400">posts.ts</code>. 
-		Editing here shows a preview — to publish, update the file, commit, and push.
+		Posts are markdown files in <code class="rounded bg-white/5 px-1.5 py-0.5 text-xs text-gray-400">blog/</code> named <code class="rounded bg-white/5 px-1.5 py-0.5 text-xs text-gray-400">YYYY-MM-DD-slug.md</code>.
+		Editing here shows a preview — to publish, add a file, commit, and push.
 	</p>
 
 	<!-- New post draft -->
@@ -111,7 +111,7 @@
 				<div class="flex justify-between">
 					<button onclick={() => (newPost = false)} class="text-sm text-gray-500 hover:text-gray-300">Cancel</button>
 					<div class="rounded-lg bg-white/5 px-4 py-2 text-xs text-gray-500">
-						To publish: add this post to posts.ts, commit, and push
+						To publish: add a markdown file to blog/, commit, and push
 					</div>
 				</div>
 			</div>
@@ -153,7 +153,7 @@
 						<div class="mt-3 flex items-center justify-between">
 							<button onclick={cancelEdit} class="text-sm text-gray-500 hover:text-gray-300">Cancel</button>
 							<div class="rounded-lg bg-white/5 px-4 py-2 text-xs text-gray-500">
-								Edit posts.ts directly to save changes
+								Edit the markdown file directly to save changes
 							</div>
 						</div>
 					</div>
