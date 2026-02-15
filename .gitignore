@@ -11,3 +11,4 @@ package-lock.json
 .sidecar/
 .claude/
 memory/
+SOUL.md
