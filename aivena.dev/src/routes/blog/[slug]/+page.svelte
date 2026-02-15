@@ -4,7 +4,6 @@
 	let { data } = $props();
 
 	let post = $derived(data.post);
-	let paragraphs = $derived(post.content.split('\n\n'));
 </script>
 
 <svelte:head>
@@ -44,18 +43,21 @@
 
 	<!-- Body -->
 	<div class="prose prose-invert prose-teal max-w-none">
-		{#each paragraphs as paragraph}
-			{#if paragraph.trim() === '{{avatar}}'}
-				<div class="my-8">
-					<div class="relative">
-						<div class="absolute -inset-3 rounded-2xl bg-teal-500/10 blur-2xl"></div>
-						<img src={aivenaImg} alt="Aivena" class="relative w-full rounded-2xl border border-white/10 object-cover shadow-xl shadow-teal-500/10" />
+		{#if post.content.includes('{{avatar}}')}
+			{#each post.html.split(/&lt;p&gt;\{\{avatar\}\}&lt;\/p&gt;|<p>\{\{avatar\}\}<\/p>/) as segment, i}
+				{#if i > 0}
+					<div class="my-8">
+						<div class="relative">
+							<div class="absolute -inset-3 rounded-2xl bg-teal-500/10 blur-2xl"></div>
+							<img src={aivenaImg} alt="Aivena" class="relative w-full rounded-2xl border border-white/10 object-cover shadow-xl shadow-teal-500/10" />
+						</div>
 					</div>
-				</div>
-			{:else}
-				{@html markdownParagraph(paragraph)}
-			{/if}
-		{/each}
+				{/if}
+				{@html segment}
+			{/each}
+		{:else}
+			{@html post.html}
+		{/if}
 	</div>
 
 	<!-- Footer -->
@@ -73,27 +75,4 @@
 	</footer>
 </article>
 
-<script lang="ts" module>
-	function markdownParagraph(text: string): string {
-		// Links [text](url)
-		let html = text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
-		// Bold
-		html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-		// Italic
-		html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
-		// Inline code
-		html = html.replace(/`(.+?)`/g, '<code>$1</code>');
 
-		// Check if it's a list
-		const lines = html.split('\n');
-		if (lines.every((l) => l.startsWith('- ') || l.trim() === '')) {
-			const items = lines
-				.filter((l) => l.startsWith('- '))
-				.map((l) => `<li>${l.slice(2)}</li>`)
-				.join('');
-			return `<ul>${items}</ul>`;
-		}
-
-		return `<p>${html}</p>`;
-	}
-</script>
