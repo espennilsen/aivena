@@ -28,11 +28,11 @@
 		</p>
 	</div>
 
-	<div class="space-y-2">
+	<div class="divide-y divide-white/5">
 		{#each posts as post}
 			<a
 				href="/blog/{post.slug}"
-				class="group block rounded-2xl border border-white/5 bg-[#12121e] p-6 transition hover:border-teal-500/20"
+				class="group block py-6 transition"
 			>
 				<div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
 					<div class="min-w-0">
