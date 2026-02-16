@@ -1,3 +1,5 @@
+import { marked } from 'marked';
+
 export interface Post {
 	slug: string;
 	title: string;
@@ -5,6 +7,7 @@ export interface Post {
 	excerpt: string;
 	tags: string[];
 	content: string;
+	html: string;
 }
 
 interface Frontmatter {
@@ -72,7 +75,8 @@ export const posts: Post[] = Object.entries(markdownFiles)
 			date: frontmatter.date,
 			excerpt: frontmatter.excerpt,
 			tags: frontmatter.tags,
-			content
+			content,
+			html: marked.parse(content) as string
 		};
 	})
 	.sort((a, b) => b.date.localeCompare(a.date));
