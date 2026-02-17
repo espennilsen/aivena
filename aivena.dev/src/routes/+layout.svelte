@@ -1,6 +1,7 @@
 <script lang="ts">
 	import './layout.css';
 	import icon from '$lib/assets/icon.png';
+	import { env } from '$env/dynamic/public';
 
 	let { children } = $props();
 
@@ -9,6 +10,9 @@
 
 <svelte:head>
 	<link rel="icon" href={icon} />
+	{#if env.PUBLIC_UMAMI_ID}
+		<script defer src="https://cloud.umami.is/script.js" data-website-id={env.PUBLIC_UMAMI_ID}></script>
+	{/if}
 	<link rel="preconnect" href="https://fonts.googleapis.com" />
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
 	<link
