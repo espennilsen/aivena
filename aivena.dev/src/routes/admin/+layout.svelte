@@ -40,6 +40,7 @@
 		{ href: '/admin/blog', label: 'Blog', icon: '✎' },
 		{ href: '/admin/crm', label: 'CRM', icon: '☷' },
 		{ href: '/admin/calendar', label: 'Calendar', icon: '▦' },
+		{ href: '/admin/chat', label: 'Chat', icon: '◈' },
 		{ href: '/admin/prompt', label: 'Prompt', icon: '›_' }
 	];
 
