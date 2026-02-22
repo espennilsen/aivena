@@ -98,10 +98,10 @@ export interface HeartbeatStatus {
 }
 
 export const heartbeat = {
-	status: () => request<HeartbeatStatus>('/heartbeat'),
-	start: () => request('/heartbeat', { method: 'POST', body: JSON.stringify({ action: 'start' }) }),
-	stop: () => request('/heartbeat', { method: 'POST', body: JSON.stringify({ action: 'stop' }) }),
-	run: () => request('/heartbeat', { method: 'POST', body: JSON.stringify({ action: 'run' }) })
+	status: () => request<HeartbeatStatus>('/api/heartbeat'),
+	start: () => request('/api/heartbeat', { method: 'POST', body: JSON.stringify({ action: 'start' }) }),
+	stop: () => request('/api/heartbeat', { method: 'POST', body: JSON.stringify({ action: 'stop' }) }),
+	run: () => request('/api/heartbeat', { method: 'POST', body: JSON.stringify({ action: 'run' }) })
 };
 
 // ── Jobs / Telemetry ───────────────────────────────────
@@ -155,27 +155,27 @@ export interface DailyStat {
 
 export const jobs = {
 	stats: (channel?: string) =>
-		request<JobStats>(`/jobs/stats${channel ? `?channel=${channel}` : ''}`),
+		request<JobStats>(`/api/jobs/stats${channel ? `?channel=${channel}` : ''}`),
 	recent: (limit = 20, channel?: string) => {
 		const params = new URLSearchParams({ limit: String(limit) });
 		if (channel) params.set('channel', channel);
-		return request<RecentJob[]>(`/jobs/recent?${params}`);
+		return request<RecentJob[]>(`/api/jobs/recent?${params}`);
 	},
-	models: (days = 30) => request<ModelBreakdown[]>(`/jobs/models?days=${days}`),
-	tools: (days = 30) => request<ToolBreakdown[]>(`/jobs/tools?days=${days}`),
+	models: (days = 30) => request<ModelBreakdown[]>(`/api/jobs/models?days=${days}`),
+	tools: (days = 30) => request<ToolBreakdown[]>(`/api/jobs/tools?days=${days}`),
 	daily: (days = 30, channel?: string) => {
 		const params = new URLSearchParams({ days: String(days) });
 		if (channel) params.set('channel', channel);
-		return request<DailyStat[]>(`/jobs/daily?${params}`);
+		return request<DailyStat[]>(`/api/jobs/daily?${params}`);
 	}
 };
 
 // ── Dashboard ──────────────────────────────────────────
 
 export const dashboard = {
-	config: () => request('/dashboard/config'),
+	config: () => request('/api/dashboard/config'),
 	prompt: (prompt: string) =>
-		request('/dashboard/prompt', {
+		request('/api/dashboard/prompt', {
 			method: 'POST',
 			body: JSON.stringify({ prompt })
 		})
@@ -196,13 +196,13 @@ export interface CalendarEvent {
 
 export const calendar = {
 	list: (start: string, end: string) =>
-		request<CalendarEvent[]>(`/calendar?start=${start}&end=${end}`),
+		request<CalendarEvent[]>(`/api/calendar?start=${start}&end=${end}`),
 	create: (event: Partial<CalendarEvent>) =>
-		request<CalendarEvent>('/calendar', { method: 'POST', body: JSON.stringify(event) }),
+		request<CalendarEvent>('/api/calendar', { method: 'POST', body: JSON.stringify(event) }),
 	update: (event: Partial<CalendarEvent> & { id: number }) =>
-		request<CalendarEvent>('/calendar', { method: 'PATCH', body: JSON.stringify(event) }),
+		request<CalendarEvent>('/api/calendar', { method: 'PATCH', body: JSON.stringify(event) }),
 	delete: (id: number) =>
-		request('/calendar', { method: 'DELETE', body: JSON.stringify({ id }) })
+		request('/api/calendar', { method: 'DELETE', body: JSON.stringify({ id }) })
 };
 
 // ── CRM ────────────────────────────────────────────────
@@ -274,53 +274,53 @@ export interface Group {
 }
 
 export const crm = {
-	contacts: (q?: string) => request<Contact[]>(`/crm/contacts${q ? `?q=${q}` : ''}`),
-	contact: (id: number) => request<ContactDetail>(`/crm/contacts/${id}`),
+	contacts: (q?: string) => request<Contact[]>(`/api/crm/contacts${q ? `?q=${q}` : ''}`),
+	contact: (id: number) => request<ContactDetail>(`/api/crm/contacts/${id}`),
 	createContact: (data: Partial<Contact> & { first_name: string }) =>
-		request<Contact>('/crm/contacts', { method: 'POST', body: JSON.stringify(data) }),
+		request<Contact>('/api/crm/contacts', { method: 'POST', body: JSON.stringify(data) }),
 	updateContact: (id: number, data: Partial<Contact>) =>
-		request<Contact>(`/crm/contacts/${id}`, { method: 'PATCH', body: JSON.stringify(data) }),
+		request<Contact>(`/api/crm/contacts/${id}`, { method: 'PATCH', body: JSON.stringify(data) }),
 	deleteContact: (id: number) =>
-		request(`/crm/contacts/${id}`, { method: 'DELETE' }),
-	companies: () => request<Company[]>('/crm/companies'),
+		request(`/api/crm/contacts/${id}`, { method: 'DELETE' }),
+	companies: () => request<Company[]>('/api/crm/companies'),
 	createCompany: (data: Partial<Company> & { name: string }) =>
-		request<Company>('/crm/companies', { method: 'POST', body: JSON.stringify(data) }),
+		request<Company>('/api/crm/companies', { method: 'POST', body: JSON.stringify(data) }),
 	interactions: (contactId?: number) =>
-		request<Interaction[]>(`/crm/interactions${contactId ? `?contact_id=${contactId}` : ''}`),
+		request<Interaction[]>(`/api/crm/interactions${contactId ? `?contact_id=${contactId}` : ''}`),
 	createInteraction: (data: { contact_id: number; interaction_type: string; summary: string; notes?: string }) =>
-		request<Interaction>('/crm/interactions', { method: 'POST', body: JSON.stringify(data) }),
+		request<Interaction>('/api/crm/interactions', { method: 'POST', body: JSON.stringify(data) }),
 	deleteInteraction: (id: number) =>
-		request(`/crm/interactions/${id}`, { method: 'DELETE' }),
+		request(`/api/crm/interactions/${id}`, { method: 'DELETE' }),
 	reminders: (contactId?: number) =>
-		request<Reminder[]>(`/crm/reminders${contactId ? `?contact_id=${contactId}` : ''}`),
-	upcoming: (days = 30) => request(`/crm/reminders/upcoming?days=${days}`),
+		request<Reminder[]>(`/api/crm/reminders${contactId ? `?contact_id=${contactId}` : ''}`),
+	upcoming: (days = 30) => request(`/api/crm/reminders/upcoming?days=${days}`),
 	createReminder: (data: { contact_id: number; reminder_type: string; reminder_date: string; message?: string }) =>
-		request<Reminder>('/crm/reminders', { method: 'POST', body: JSON.stringify(data) }),
+		request<Reminder>('/api/crm/reminders', { method: 'POST', body: JSON.stringify(data) }),
 	deleteReminder: (id: number) =>
-		request(`/crm/reminders/${id}`, { method: 'DELETE' }),
-	groups: () => request<Group[]>('/crm/groups'),
+		request(`/api/crm/reminders/${id}`, { method: 'DELETE' }),
+	groups: () => request<Group[]>('/api/crm/groups'),
 	createGroup: (data: { name: string; description?: string }) =>
-		request<Group>('/crm/groups', { method: 'POST', body: JSON.stringify(data) }),
-	groupMembers: (groupId: number) => request<Contact[]>(`/crm/groups/${groupId}/members`),
+		request<Group>('/api/crm/groups', { method: 'POST', body: JSON.stringify(data) }),
+	groupMembers: (groupId: number) => request<Contact[]>(`/api/crm/groups/${groupId}/members`),
 	addGroupMember: (groupId: number, contactId: number) =>
-		request(`/crm/groups/${groupId}/members`, { method: 'POST', body: JSON.stringify({ contact_id: contactId }) }),
+		request(`/api/crm/groups/${groupId}/members`, { method: 'POST', body: JSON.stringify({ contact_id: contactId }) }),
 	removeGroupMember: (groupId: number, contactId: number) =>
-		request(`/crm/groups/${groupId}/members/${contactId}`, { method: 'DELETE' }),
+		request(`/api/crm/groups/${groupId}/members/${contactId}`, { method: 'DELETE' }),
 	relationships: (contactId: number) =>
-		request<Relationship[]>(`/crm/relationships?contact_id=${contactId}`),
+		request<Relationship[]>(`/api/crm/relationships?contact_id=${contactId}`),
 	createRelationship: (data: { contact_id: number; related_contact_id: number; relationship_type: string }) =>
-		request<Relationship>('/crm/relationships', { method: 'POST', body: JSON.stringify(data) }),
+		request<Relationship>('/api/crm/relationships', { method: 'POST', body: JSON.stringify(data) }),
 	deleteRelationship: (id: number) =>
-		request(`/crm/relationships/${id}`, { method: 'DELETE' }),
+		request(`/api/crm/relationships/${id}`, { method: 'DELETE' }),
 	exportCsv: () => {
 		const base = getApiEndpoint();
 		const token = getApiToken();
-		return fetch(`${base}/crm/contacts/export.csv`, {
+		return fetch(`${base}/api/crm/contacts/export.csv`, {
 			headers: token ? { Authorization: `Bearer ${token}` } : {}
 		}).then(r => r.text());
 	},
 	importCsv: (csv: string) =>
-		request('/crm/contacts/import', { method: 'POST', body: csv, headers: { 'Content-Type': 'text/csv' } })
+		request('/api/crm/contacts/import', { method: 'POST', body: csv, headers: { 'Content-Type': 'text/csv' } })
 };
 
 // ── Tasks (td) ─────────────────────────────────────────
@@ -413,11 +413,11 @@ export const td = {
 		if (params?.all) p.set('all', '1');
 		if (params?.implementer) p.set('implementer', params.implementer);
 		const qs = p.toString();
-		return request<TdIssue[]>(`/td/${qs ? `?${qs}` : ''}`);
+		return request<TdIssue[]>(`/api/td/${qs ? `?${qs}` : ''}`);
 	},
-	detail: (id: string) => request<TdIssueDetail>(`/td/detail?id=${id}`),
-	tree: () => request<TdTree>('/td/tree'),
-	config: () => request<{ crossProjectEnabled?: boolean; crossProjectDepth?: number }>('/td/config'),
+	detail: (id: string) => request<TdIssueDetail>(`/api/td/detail?id=${id}`),
+	tree: () => request<TdTree>('/api/td/tree'),
+	config: () => request<{ crossProjectEnabled?: boolean; crossProjectDepth?: number }>('/api/td/config'),
 	global: (params?: { type?: string; priority?: string; all?: boolean; project?: string; implementer?: string }) => {
 		const p = new URLSearchParams();
 		if (params?.type) p.set('type', params.type);
@@ -425,22 +425,22 @@ export const td = {
 		if (params?.all) p.set('all', '1');
 		if (params?.project) p.set('project', params.project);
 		if (params?.implementer) p.set('implementer', params.implementer);
-		return request<{ issues: TdIssue[]; projects: string[] }>(`/td/global?${p}`);
+		return request<{ issues: TdIssue[]; projects: string[] }>(`/api/td/global?${p}`);
 	},
 	create: (data: { title: string; type?: string; priority?: string; description?: string; labels?: string; parent?: string }) =>
-		request('/td/', { method: 'POST', body: JSON.stringify(data) }),
+		request('/api/td/', { method: 'POST', body: JSON.stringify(data) }),
 	update: (data: { id: string; status?: string; title?: string; priority?: string; description?: string; labels?: string }) =>
-		request('/td/', { method: 'PATCH', body: JSON.stringify(data) }),
+		request('/api/td/', { method: 'PATCH', body: JSON.stringify(data) }),
 	delete: (id: string) =>
-		request('/td/', { method: 'DELETE', body: JSON.stringify({ id }) }),
+		request('/api/td/', { method: 'DELETE', body: JSON.stringify({ id }) }),
 	log: (data: { id: string; message: string; type?: string }) =>
-		request('/td/log', { method: 'POST', body: JSON.stringify(data) }),
+		request('/api/td/log', { method: 'POST', body: JSON.stringify(data) }),
 	review: (data: { id: string; message?: string }) =>
-		request('/td/review', { method: 'POST', body: JSON.stringify(data) }),
+		request('/api/td/review', { method: 'POST', body: JSON.stringify(data) }),
 	approve: (data: { id: string; reason?: string }) =>
-		request('/td/approve', { method: 'POST', body: JSON.stringify(data) }),
+		request('/api/td/approve', { method: 'POST', body: JSON.stringify(data) }),
 	reject: (data: { id: string; reason?: string }) =>
-		request('/td/reject', { method: 'POST', body: JSON.stringify(data) }),
+		request('/api/td/reject', { method: 'POST', body: JSON.stringify(data) }),
 	handoff: (data: { id: string; done?: string[]; remaining?: string[]; decisions?: string[]; uncertain?: string[]; note?: string }) =>
-		request('/td/handoff', { method: 'POST', body: JSON.stringify(data) })
+		request('/api/td/handoff', { method: 'POST', body: JSON.stringify(data) })
 };
