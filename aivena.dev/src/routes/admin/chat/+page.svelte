@@ -298,29 +298,27 @@
 		{/each}
 	</div>
 
-	<!-- Input area -->
-	<div class="mt-3 flex gap-2">
-		<div class="relative flex-1">
-			<textarea
-				bind:this={inputEl}
-				bind:value={input}
-				onkeydown={handleKeydown}
-				placeholder="Send a message…"
-				rows="1"
-				disabled={!connected}
-				class="w-full resize-none rounded-xl border border-white/10 bg-[#12121e] px-4 py-3 pr-12 text-sm text-gray-200 placeholder-gray-500 outline-none transition focus:border-teal-500/50 disabled:opacity-50"
-			></textarea>
-			<button
-				onclick={send}
-				disabled={sending || !input.trim() || !connected}
-				class="absolute right-2 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-lg bg-teal-600 text-white transition hover:bg-teal-500 disabled:opacity-30"
-				title="Send (Enter)"
-			>
-				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-4 w-4">
-					<path d="M3.105 2.288a.75.75 0 0 0-.826.95l1.414 4.926A1.5 1.5 0 0 0 5.135 9.25h6.115a.75.75 0 0 1 0 1.5H5.135a1.5 1.5 0 0 0-1.442 1.086l-1.414 4.926a.75.75 0 0 0 .826.95l14.095-5.927a.75.75 0 0 0 0-1.37L3.105 2.288Z" />
-				</svg>
-			</button>
-		</div>
+	<!-- Input area — flex row acts as the visual input field -->
+	<div class="mt-3 flex items-center gap-2 rounded-xl border border-white/10 bg-[#12121e] py-1.5 pl-4 pr-1.5 transition-colors focus-within:border-teal-500/50">
+		<textarea
+			bind:this={inputEl}
+			bind:value={input}
+			onkeydown={handleKeydown}
+			placeholder="Send a message…"
+			rows="1"
+			disabled={!connected}
+			class="flex-1 resize-none bg-transparent py-1.5 text-sm text-gray-200 placeholder-gray-500 outline-none disabled:opacity-50"
+		></textarea>
+		<button
+			onclick={send}
+			disabled={sending || !input.trim() || !connected}
+			class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-teal-600 text-white transition hover:bg-teal-500 disabled:opacity-30"
+			title="Send (Enter)"
+		>
+			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-4 w-4">
+				<path d="M3.105 2.288a.75.75 0 0 0-.826.95l1.414 4.926A1.5 1.5 0 0 0 5.135 9.25h6.115a.75.75 0 0 1 0 1.5H5.135a1.5 1.5 0 0 0-1.442 1.086l-1.414 4.926a.75.75 0 0 0 .826.95l14.095-5.927a.75.75 0 0 0 0-1.37L3.105 2.288Z" />
+			</svg>
+		</button>
 	</div>
 </div>
 
