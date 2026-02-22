@@ -313,7 +313,7 @@
 			<button
 				onclick={send}
 				disabled={sending || !input.trim() || !connected}
-				class="absolute bottom-2 right-2 flex h-8 w-8 items-center justify-center rounded-lg bg-teal-600 text-white transition hover:bg-teal-500 disabled:opacity-30"
+				class="absolute right-2 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-lg bg-teal-600 text-white transition hover:bg-teal-500 disabled:opacity-30"
 				title="Send (Enter)"
 			>
 				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-4 w-4">
