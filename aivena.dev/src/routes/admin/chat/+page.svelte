@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { dashboard, connectSSE, type SSEEvent } from '$lib/admin/api';
 	import { marked } from 'marked';
+	import DOMPurify from 'dompurify';
 	import { tick } from 'svelte';
 
 	// ── Types ──────────────────────────────────────────────
@@ -126,7 +127,10 @@
 					case 'tool_end': {
 						const msg2 = messages.find(m => m.streaming);
 						if (msg2?.tools) {
-							const tool = msg2.tools.find(t => t.name === event.toolName && t.status === 'running');
+							// Match by ID when available (preferred), fall back to name
+							const tool = event.toolCallId
+								? msg2.tools.find(t => t.id === event.toolCallId)
+								: msg2.tools.find(t => t.name === event.toolName && t.status === 'running');
 							if (tool) {
 								tool.status = event.isError ? 'error' : 'done';
 								tool.preview = event.preview;
@@ -167,7 +171,10 @@
 
 	async function addFiles(files: FileList | File[]) {
 		for (const file of Array.from(files)) {
-			if (attachments.length >= MAX_ATTACHMENTS) break;
+			if (attachments.length >= MAX_ATTACHMENTS) {
+				error = `Maximum ${MAX_ATTACHMENTS} attachments reached`;
+				break;
+			}
 			if (file.size > MAX_FILE_SIZE) {
 				error = `${file.name} exceeds 10MB limit`;
 				continue;
@@ -284,9 +291,10 @@
 	function renderMarkdown(text: string): string {
 		if (!text) return '';
 		try {
-			return marked.parse(text, { async: false, breaks: true }) as string;
+			const html = marked.parse(text, { async: false, breaks: true }) as string;
+			return DOMPurify.sanitize(html);
 		} catch {
-			return text.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+			return DOMPurify.sanitize(text);
 		}
 	}
 

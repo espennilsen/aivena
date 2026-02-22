@@ -83,7 +83,7 @@ export type SSEEvent =
 	| { type: 'turn_start'; turn: number }
 	| { type: 'turn_end'; turn: number; text?: string; toolResults: number }
 	| { type: 'tool_start'; toolName: string; toolCallId: string }
-	| { type: 'tool_end'; toolName: string; isError: boolean; preview?: string };
+	| { type: 'tool_end'; toolName: string; toolCallId?: string; isError: boolean; preview?: string };
 
 /**
  * Connect to the SSE event stream using fetch (supports Authorization header).
@@ -134,6 +134,9 @@ export function connectSSE(
 					}
 				}
 			}
+
+			// Server closed the stream cleanly — trigger reconnect
+			onError?.(new Error('SSE stream closed by server'));
 		} catch (err: unknown) {
 			if (err instanceof DOMException && (err as DOMException).name === 'AbortError') return;
 			onError?.(err);
