@@ -158,8 +158,14 @@
 		{/if}
 
 		<!-- Content -->
-		<div class="flex-1 overflow-y-auto p-6 sm:p-8 lg:p-10">
-			{@render children()}
-		</div>
+		{#if page.url.pathname === '/admin/chat'}
+			<div class="flex flex-1 flex-col overflow-hidden p-3 sm:p-4 lg:p-5">
+				{@render children()}
+			</div>
+		{:else}
+			<div class="flex-1 overflow-y-auto p-6 sm:p-8 lg:p-10">
+				{@render children()}
+			</div>
+		{/if}
 	</div>
 {/if}

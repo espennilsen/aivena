@@ -193,8 +193,8 @@
 	});
 </script>
 
-<!-- Full-height chat layout — max-h prevents pushing input off-screen -->
-<div class="flex max-h-[calc(100vh-8rem)] flex-col sm:max-h-[calc(100vh-9rem)] lg:max-h-[calc(100vh-6rem)]">
+<!-- Full-height chat layout — parent is overflow-hidden flex-col -->
+<div class="flex min-h-0 flex-1 flex-col">
 
 	<!-- Header bar -->
 	<div class="flex items-center justify-between pb-4">
