@@ -5,6 +5,13 @@
 
 	// ── Types ──────────────────────────────────────────────
 
+	interface Attachment {
+		id: string;
+		file: File;
+		preview: string; // data URL for images, empty for others
+		type: 'image' | 'file';
+	}
+
 	interface ChatMessage {
 		id: string;
 		role: 'user' | 'assistant';
@@ -12,6 +19,7 @@
 		time: string;
 		tools?: ToolCall[];
 		streaming?: boolean;
+		attachments?: Attachment[];
 	}
 
 	interface ToolCall {
@@ -25,13 +33,19 @@
 
 	let messages = $state<ChatMessage[]>([]);
 	let input = $state('');
+	let attachments = $state<Attachment[]>([]);
 	let sending = $state(false);
 	let agentRunning = $state(false);
 	let connected = $state(false);
+	let dragging = $state(false);
 	let error = $state('');
 	let messagesEl: HTMLDivElement;
 	let inputEl: HTMLTextAreaElement;
+	let fileInputEl: HTMLInputElement;
 	let sseController: AbortController | null = null;
+
+	const MAX_ATTACHMENTS = 5;
+	const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
 	// ── SSE Connection ─────────────────────────────────────
 
@@ -139,27 +153,118 @@
 		}
 	}
 
+	// ── Attachments ────────────────────────────────────────
+
+	function createPreview(file: File): Promise<string> {
+		return new Promise((resolve) => {
+			if (!file.type.startsWith('image/')) { resolve(''); return; }
+			const reader = new FileReader();
+			reader.onload = () => resolve(reader.result as string);
+			reader.onerror = () => resolve('');
+			reader.readAsDataURL(file);
+		});
+	}
+
+	async function addFiles(files: FileList | File[]) {
+		for (const file of Array.from(files)) {
+			if (attachments.length >= MAX_ATTACHMENTS) break;
+			if (file.size > MAX_FILE_SIZE) {
+				error = `${file.name} exceeds 10MB limit`;
+				continue;
+			}
+			const preview = await createPreview(file);
+			attachments = [...attachments, {
+				id: crypto.randomUUID(),
+				file,
+				preview,
+				type: file.type.startsWith('image/') ? 'image' : 'file'
+			}];
+		}
+	}
+
+	function removeAttachment(id: string) {
+		attachments = attachments.filter(a => a.id !== id);
+	}
+
+	function handlePaste(e: ClipboardEvent) {
+		const items = e.clipboardData?.items;
+		if (!items) return;
+		const files: File[] = [];
+		for (const item of Array.from(items)) {
+			if (item.kind === 'file') {
+				const file = item.getAsFile();
+				if (file) files.push(file);
+			}
+		}
+		if (files.length > 0) {
+			e.preventDefault();
+			addFiles(files);
+		}
+	}
+
+	function handleDrop(e: DragEvent) {
+		e.preventDefault();
+		dragging = false;
+		if (e.dataTransfer?.files.length) addFiles(e.dataTransfer.files);
+	}
+
+	function handleDragOver(e: DragEvent) {
+		e.preventDefault();
+		dragging = true;
+	}
+
+	function handleDragLeave() {
+		dragging = false;
+	}
+
+	function openFilePicker() {
+		fileInputEl?.click();
+	}
+
+	function handleFileInput(e: Event) {
+		const input = e.target as HTMLInputElement;
+		if (input.files?.length) addFiles(input.files);
+		input.value = '';
+	}
+
+	function formatFileSize(bytes: number): string {
+		if (bytes < 1024) return bytes + ' B';
+		if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(0) + ' KB';
+		return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+	}
+
 	// ── Send prompt ────────────────────────────────────────
 
 	async function send() {
 		const text = input.trim();
-		if (!text || sending) return;
+		if ((!text && attachments.length === 0) || sending) return;
 
+		const currentAttachments = [...attachments];
 		input = '';
+		attachments = [];
 		sending = true;
 		error = '';
 
-		// Add user message immediately
+		// Add user message with attachments
 		messages = [...messages, {
 			id: crypto.randomUUID(),
 			role: 'user',
 			content: text,
-			time: new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })
+			time: new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }),
+			attachments: currentAttachments.length > 0 ? currentAttachments : undefined
 		}];
 		scrollToBottom();
 
 		try {
-			await dashboard.prompt(text);
+			// TODO: when pi-web-dashboard supports file upload (td-c37910),
+			// upload attachments first, then pass references with the prompt.
+			// For now, mention attachments in the prompt text.
+			let promptText = text;
+			if (currentAttachments.length > 0) {
+				const names = currentAttachments.map(a => a.file.name).join(', ');
+				promptText += `\n\n[Attached files: ${names} — file upload not yet supported by backend]`;
+			}
+			await dashboard.prompt(promptText);
 		} catch (e) {
 			error = String(e);
 		}
@@ -242,7 +347,23 @@
 				<!-- User message -->
 				<div class="flex justify-end">
 					<div class="max-w-[80%] rounded-2xl rounded-br-md bg-teal-600/20 px-4 py-3">
-						<div class="whitespace-pre-wrap text-sm text-gray-200">{msg.content}</div>
+						{#if msg.attachments && msg.attachments.length > 0}
+							<div class="mb-2 flex flex-wrap gap-1.5">
+								{#each msg.attachments as att}
+									{#if att.type === 'image' && att.preview}
+										<img src={att.preview} alt={att.file.name} class="max-h-40 rounded-lg border border-white/10 object-cover" />
+									{:else}
+										<span class="inline-flex items-center gap-1 rounded-md border border-white/10 bg-white/5 px-2 py-1 text-xs text-gray-300">
+											📎 {att.file.name}
+											<span class="text-gray-500">({formatFileSize(att.file.size)})</span>
+										</span>
+									{/if}
+								{/each}
+							</div>
+						{/if}
+						{#if msg.content}
+							<div class="whitespace-pre-wrap text-sm text-gray-200">{msg.content}</div>
+						{/if}
 						<div class="mt-1.5 text-right text-[10px] text-gray-500">{msg.time}</div>
 					</div>
 				</div>
@@ -298,27 +419,78 @@
 		{/each}
 	</div>
 
-	<!-- Input area — flex row acts as the visual input field -->
-	<div class="mt-3 flex items-center gap-2 rounded-xl border border-white/10 bg-[#12121e] py-1.5 pl-4 pr-1.5 transition-colors focus-within:border-teal-500/50">
-		<textarea
-			bind:this={inputEl}
-			bind:value={input}
-			onkeydown={handleKeydown}
-			placeholder="Send a message…"
-			rows="1"
-			disabled={!connected}
-			class="flex-1 resize-none bg-transparent py-1.5 text-sm text-gray-200 placeholder-gray-500 outline-none disabled:opacity-50"
-		></textarea>
-		<button
-			onclick={send}
-			disabled={sending || !input.trim() || !connected}
-			class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-teal-600 text-white transition hover:bg-teal-500 disabled:opacity-30"
-			title="Send (Enter)"
-		>
-			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-4 w-4">
-				<path d="M3.105 2.288a.75.75 0 0 0-.826.95l1.414 4.926A1.5 1.5 0 0 0 5.135 9.25h6.115a.75.75 0 0 1 0 1.5H5.135a1.5 1.5 0 0 0-1.442 1.086l-1.414 4.926a.75.75 0 0 0 .826.95l14.095-5.927a.75.75 0 0 0 0-1.37L3.105 2.288Z" />
-			</svg>
-		</button>
+	<!-- Input area -->
+	<!-- svelte-ignore a11y_no_static_element_interactions -->
+	<div
+		class="mt-3 rounded-xl border bg-[#12121e] transition-colors focus-within:border-teal-500/50
+			{dragging ? 'border-teal-500/50 bg-teal-500/5' : 'border-white/10'}"
+		ondrop={handleDrop}
+		ondragover={handleDragOver}
+		ondragleave={handleDragLeave}
+	>
+		<!-- Attachment previews -->
+		{#if attachments.length > 0}
+			<div class="flex flex-wrap gap-2 px-3 pt-2.5">
+				{#each attachments as att (att.id)}
+					<div class="group relative">
+						{#if att.type === 'image' && att.preview}
+							<img src={att.preview} alt={att.file.name} class="h-16 w-16 rounded-lg border border-white/10 object-cover" />
+						{:else}
+							<div class="flex h-16 items-center rounded-lg border border-white/10 bg-white/5 px-3">
+								<span class="text-xs text-gray-400">📎 {att.file.name}</span>
+							</div>
+						{/if}
+						<button
+							onclick={() => removeAttachment(att.id)}
+							class="absolute -right-1.5 -top-1.5 hidden h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] text-white group-hover:flex"
+							title="Remove"
+						>✕</button>
+					</div>
+				{/each}
+			</div>
+		{/if}
+
+		<!-- Text input row -->
+		<div class="flex items-center gap-1.5 py-1.5 pl-1.5 pr-1.5">
+			<input
+				bind:this={fileInputEl}
+				type="file"
+				multiple
+				accept="image/*,.pdf,.txt,.md,.csv,.json,.ts,.js,.py,.sh"
+				onchange={handleFileInput}
+				class="hidden"
+			/>
+			<button
+				onclick={openFilePicker}
+				disabled={!connected || attachments.length >= MAX_ATTACHMENTS}
+				class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-gray-500 transition hover:bg-white/5 hover:text-gray-300 disabled:opacity-30"
+				title="Attach file"
+			>
+				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-4 w-4">
+					<path fill-rule="evenodd" d="M15.621 4.379a3 3 0 0 0-4.242 0l-7 7a3 3 0 0 0 4.241 4.243h.001l.497-.5a.75.75 0 0 1 1.064 1.057l-.498.501-.002.002a4.5 4.5 0 0 1-6.364-6.364l7-7a4.5 4.5 0 0 1 6.368 6.36l-3.455 3.553A2.625 2.625 0 1 1 9.52 9.52l3.45-3.451a.75.75 0 1 1 1.061 1.06l-3.45 3.451a1.125 1.125 0 0 0 1.587 1.595l3.454-3.553a3 3 0 0 0 0-4.242Z" clip-rule="evenodd" />
+				</svg>
+			</button>
+			<textarea
+				bind:this={inputEl}
+				bind:value={input}
+				onkeydown={handleKeydown}
+				onpaste={handlePaste}
+				placeholder={dragging ? 'Drop files here…' : 'Send a message…'}
+				rows="1"
+				disabled={!connected}
+				class="flex-1 resize-none bg-transparent py-1.5 text-sm text-gray-200 placeholder-gray-500 outline-none disabled:opacity-50"
+			></textarea>
+			<button
+				onclick={send}
+				disabled={sending || (!input.trim() && attachments.length === 0) || !connected}
+				class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-teal-600 text-white transition hover:bg-teal-500 disabled:opacity-30"
+				title="Send (Enter)"
+			>
+				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-4 w-4">
+					<path d="M3.105 2.288a.75.75 0 0 0-.826.95l1.414 4.926A1.5 1.5 0 0 0 5.135 9.25h6.115a.75.75 0 0 1 0 1.5H5.135a1.5 1.5 0 0 0-1.442 1.086l-1.414 4.926a.75.75 0 0 0 .826.95l14.095-5.927a.75.75 0 0 0 0-1.37L3.105 2.288Z" />
+				</svg>
+			</button>
+		</div>
 	</div>
 </div>
 
