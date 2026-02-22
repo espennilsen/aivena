@@ -193,8 +193,8 @@
 	});
 </script>
 
-<!-- Full-height chat layout that fills the admin content area -->
-<div class="flex h-[calc(100vh-5rem)] flex-col lg:h-[calc(100vh-3rem)]">
+<!-- Full-height chat layout — max-h prevents pushing input off-screen -->
+<div class="flex max-h-[calc(100vh-8rem)] flex-col sm:max-h-[calc(100vh-9rem)] lg:max-h-[calc(100vh-6rem)]">
 
 	<!-- Header bar -->
 	<div class="flex items-center justify-between pb-4">
@@ -226,7 +226,7 @@
 	<!-- Messages area -->
 	<div
 		bind:this={messagesEl}
-		class="flex-1 space-y-4 overflow-y-auto scroll-smooth rounded-xl border border-white/5 bg-[#0d0d18] p-4"
+		class="min-h-0 flex-1 space-y-4 overflow-y-auto scroll-smooth rounded-xl border border-white/5 bg-[#0d0d18] p-4"
 	>
 		{#if messages.length === 0}
 			<div class="flex h-full items-center justify-center">
