@@ -40,6 +40,7 @@
 	let connected = $state(false);
 	let dragging = $state(false);
 	let error = $state('');
+	let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
 	let messagesEl: HTMLDivElement;
 	let inputEl: HTMLTextAreaElement;
 	let fileInputEl: HTMLInputElement;
@@ -144,8 +145,9 @@
 			},
 			() => {
 				connected = false;
+				agentRunning = false;
 				// Auto-reconnect after 3s
-				setTimeout(connect, 3000);
+				reconnectTimer = setTimeout(connect, 3000);
 			}
 		);
 	}
@@ -302,7 +304,10 @@
 
 	$effect(() => {
 		connect();
-		return () => { sseController?.abort(); };
+		return () => {
+			if (reconnectTimer) clearTimeout(reconnectTimer);
+			sseController?.abort();
+		};
 	});
 </script>
 
