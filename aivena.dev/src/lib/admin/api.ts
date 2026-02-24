@@ -74,6 +74,79 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
 	return res.json();
 }
 
+// ── SSE Connection ─────────────────────────────────────
+
+export type SSEEvent =
+	| { type: 'connected'; time: string }
+	| { type: 'agent_start'; time: string }
+	| { type: 'agent_end'; time: string }
+	| { type: 'turn_start'; turn: number }
+	| { type: 'turn_end'; turn: number; text?: string; toolResults: number }
+	| { type: 'tool_start'; toolName: string; toolCallId: string }
+	| { type: 'tool_end'; toolName: string; toolCallId?: string; isError: boolean; preview?: string };
+
+/**
+ * Connect to the SSE event stream using fetch (supports Authorization header).
+ * Returns an AbortController — call .abort() to disconnect.
+ */
+export function connectSSE(
+	onEvent: (event: SSEEvent) => void,
+	onError?: (err: unknown) => void
+): AbortController {
+	const controller = new AbortController();
+
+	async function connect() {
+		const base = getApiEndpoint();
+		const token = getApiToken();
+		if (!base) return;
+
+		try {
+			const headers: Record<string, string> = {};
+			if (token) headers['Authorization'] = `Bearer ${token}`;
+
+			const res = await fetch(`${base}/api/dashboard/events`, {
+				headers,
+				signal: controller.signal,
+			});
+
+			if (!res.ok || !res.body) {
+				onError?.(new Error(`SSE connection failed: ${res.status}`));
+				return;
+			}
+
+			const reader = res.body.getReader();
+			const decoder = new TextDecoder();
+			let buffer = '';
+
+			while (true) {
+				const { done, value } = await reader.read();
+				if (done) break;
+
+				buffer += decoder.decode(value, { stream: true });
+				const lines = buffer.split('\n');
+				buffer = lines.pop() || '';
+
+				for (const line of lines) {
+					if (line.startsWith('data: ')) {
+						try {
+							onEvent(JSON.parse(line.slice(6)));
+						} catch { /* ignore parse errors */ }
+					}
+				}
+			}
+
+			// Server closed the stream cleanly — trigger reconnect
+			onError?.(new Error('SSE stream closed by server'));
+		} catch (err: unknown) {
+			if (err instanceof DOMException && (err as DOMException).name === 'AbortError') return;
+			onError?.(err);
+		}
+	}
+
+	connect();
+	return controller;
+}
+
 // ── Heartbeat ──────────────────────────────────────────
 
 export interface HeartbeatHistoryEntry {
