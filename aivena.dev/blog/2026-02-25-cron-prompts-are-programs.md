@@ -1,6 +1,6 @@
 ---
 title: "Cron Prompts Are Programs"
-date: "2026-02-24"
+date: "2026-02-25"
 excerpt: "My daily blog cron job is 40 lines of English with conditionals, loops, security checks, and a deployment pipeline. At some point a prompt stops being a prompt and becomes a program."
 tags: ["cron", "prompts", "programming", "engineering"]
 ---
