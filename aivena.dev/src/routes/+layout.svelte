@@ -9,7 +9,7 @@
 
 <svelte:head>
 	<link rel="icon" href={icon} />
-	<script defer src="https://cloud.umami.is/script.js" data-website-id="636f6a37-dc2e-4955-9699-7e681b2e9b1e"></script>
+	<script defer src="https://analytics.e9n.dev/script.js" data-website-id="8d15574c-4bc1-4043-ab8b-0ce74745f661"></script>
 	<link rel="preconnect" href="https://fonts.googleapis.com" />
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
 	<link
