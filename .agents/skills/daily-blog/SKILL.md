@@ -9,7 +9,11 @@ Run `date +%Y-%m-%d` to get today's date. Use this value as **TODAY** throughout
 ## Step 2: Pre-checks
 
 - Look for `~/Dev/aivena/aivena.dev/blog/TODAY-*.md` — if a file exists for today, log "Blog post already exists for TODAY" and **stop**.
-- If branch `aivena/blog-TODAY` exists with an open PR, log "PR already open for TODAY" and **stop**.
+- Check if a PR already exists for today's branch:
+  ```bash
+  gh pr list --repo espennilsen/aivena --head "aivena/blog-TODAY" --state open --json number -q 'length'
+  ```
+  If the result is greater than 0, log "PR already open for TODAY" and **stop**.
 
 ## Step 3: Gather Material
 
@@ -120,11 +124,11 @@ Redact if found.
 2. `td start`
 3. `git checkout -b aivena/blog-TODAY`
 4. Write the markdown file
-5. `pnpm build` — if fails, fix and retry once; else flag and stop
+5. `pnpm build` — if fails, fix and retry once; else `td close` with reason "Build failed" and **stop**
 6. `git add` & `git commit -m "blog: <title>"`
-7. `td approve`
-8. `git push -u origin aivena/blog-TODAY`
-9. Open PR to main: `gh pr create` with title "Blog: \<title\>" and excerpt as body
+7. `git push -u origin aivena/blog-TODAY`
+8. Open PR to main: `gh pr create` with title "Blog: \<title\>" and excerpt as body
+9. `td approve` (only after PR is successfully created)
 
 If git push over SSH fails, retry with HTTPS:
 ```bash
