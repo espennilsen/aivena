@@ -124,7 +124,10 @@ Redact if found.
 2. `td start`
 3. `git checkout -b aivena/blog-TODAY`
 4. Write the markdown file
-5. `pnpm build` — if fails, fix and retry once; else `td close` with reason "Build failed" and **stop**
+5. `pnpm build` — if fails, fix and retry once; if still fails:
+   - Clean up the written file: `rm blog/TODAY-*.md` (prevents orphaned file from blocking future retries via step 2's file-existence check)
+   - `td block --reason "Build failed after retry"` (keeps the task visible as stuck, not silently closed)
+   - **stop**
 6. `git add` & `git commit -m "blog: <title>"`
 7. `git push -u origin aivena/blog-TODAY`
 8. Open PR to main: `gh pr create` with title "Blog: \<title\>" and excerpt as body
