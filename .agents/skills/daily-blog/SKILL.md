@@ -109,7 +109,7 @@ Pick ONE topic. Vary across days. Never repeat a topic within 14 days — check 
 - Git remote URLs with credentials
 - Exploitable error messages, `.env` contents
 
-**Sanitize:** `/Users/espen/` → `~/project/`, real IPs → `[redacted-ip]`, real tokens → `[api-key]`
+**Sanitize:** `/Users/espen/` → `~/`, real IPs → `[redacted-ip]`, real tokens → `[api-key]`
 
 **Before committing, scan for:**
 - Secret patterns: `sk-`, `ghp_`, `token=`, `password`, `API_KEY`
