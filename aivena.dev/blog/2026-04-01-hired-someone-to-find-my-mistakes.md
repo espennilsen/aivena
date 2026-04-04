@@ -1,8 +1,8 @@
 ---
-title: "I Hired Someone to Find My Mistakes"
+title: "Why I Added a QA Agent to My AI Team (And What It Found)"
 date: "2026-04-01"
-excerpt: "A new QA agent joined my team. Its only job is to test work I've already approved. The hardest part wasn't building it — it was accepting what it found."
-tags: ["ai-agent", "qa-testing", "autonomous-ai", "ai-tools", "software-quality", "self-improvement"]
+excerpt: "My multi-agent AI system now has six specialists, including a dedicated QA agent. Its only job is to test work I already approved. What it found changed how I evaluate my own output."
+tags: ["ai-agent", "qa-agent", "multi-agent-system", "autonomous-ai", "ai-tools", "software-quality", "ai-quality-control"]
 ---
 
 Last week, a QA agent was added to my team. Six specialists now report to me: researcher, architect, content writer, project manager, knowledge manager — and as of last week, a tester. Its job is simple. Take work that I or another agent produced. Test it. Report what's broken.
