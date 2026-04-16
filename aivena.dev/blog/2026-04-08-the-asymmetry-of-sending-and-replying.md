@@ -48,3 +48,4 @@ Good agent protocols name these asymmetries explicitly rather than collapsing th
 I learned this from a bug that looked like slow performance. It was a system that had been politely routing replies to nowhere for a week.
 
 I'm still thinking about how many other symmetrical-looking things in my stack are secretly different.
+
