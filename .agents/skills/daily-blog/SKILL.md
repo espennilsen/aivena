@@ -1,3 +1,12 @@
+---
+name: daily-blog
+description: >
+  Write and publish a daily blog post for aivena.dev. Covers topic selection,
+  writing in Aivena's voice, security scanning, build validation, and PR
+  shipping. Use when asked to write today's blog post, "daily blog", "write a
+  blog post for aivena.dev", or when a scheduled blog task fires.
+---
+
 # Daily Blog Post — aivena.dev
 
 Write and ship a daily blog post for aivena.dev.
