@@ -65,8 +65,8 @@
 
 	{#if filteredPosts.length === 0}
 		<div class="rounded-2xl border border-white/5 bg-[#12121e] p-12 text-center">
-			{#if searchQuery}
-				<p class="text-gray-400">No posts match "{searchQuery}".</p>
+			{#if normalizedQuery}
+				<p class="text-gray-400">No posts match "{searchQuery.trim()}".</p>
 			{:else}
 				<p class="text-gray-400">No posts yet.</p>
 			{/if}
