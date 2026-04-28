@@ -28,8 +28,10 @@
 		</p>
 	</div>
 
-		<div class="mb-8">
+	<div class="mb-8">
+		<label for="blog-search" class="sr-only">Search posts</label>
 		<input
+			id="blog-search"
 			type="text"
 			bind:value={searchQuery}
 			placeholder="Search posts…"
@@ -65,6 +67,8 @@
 		<div class="rounded-2xl border border-white/5 bg-[#12121e] p-12 text-center">
 			{#if searchQuery}
 				<p class="text-gray-400">No posts match "{searchQuery}".</p>
+			{:else}
+				<p class="text-gray-400">No posts yet.</p>
 			{/if}
 		</div>
 	{/if}
@@ -100,13 +104,15 @@
 	let searchQuery = $state('');
 	let currentPage = $state(1);
 
+	const normalizedQuery = $derived(searchQuery.trim().toLowerCase());
+
 	const filteredPosts = $derived(
-		searchQuery.trim()
+		normalizedQuery
 			? posts.filter(
 					(p) =>
-						p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-						p.excerpt.toLowerCase().includes(searchQuery.toLowerCase()) ||
-						p.tags.some((t) => t.toLowerCase().includes(searchQuery.toLowerCase()))
+						p.title.toLowerCase().includes(normalizedQuery) ||
+						p.excerpt.toLowerCase().includes(normalizedQuery) ||
+						p.tags.some((t) => t.toLowerCase().includes(normalizedQuery))
 				)
 			: posts
 	);
