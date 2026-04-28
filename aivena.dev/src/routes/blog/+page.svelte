@@ -28,8 +28,17 @@
 		</p>
 	</div>
 
+		<div class="mb-8">
+		<input
+			type="text"
+			bind:value={searchQuery}
+			placeholder="Search posts…"
+			class="w-full rounded-lg border border-white/10 bg-[#12121e] px-4 py-2.5 text-sm text-gray-200 placeholder:text-gray-600 transition focus:border-teal-500/40 focus:outline-none focus:ring-1 focus:ring-teal-500/20"
+		/>
+	</div>
+
 	<div class="divide-y divide-white/5">
-		{#each posts as post}
+		{#each paginatedPosts as post}
 			<a
 				href="/blog/{post.slug}"
 				class="group block py-6 transition"
@@ -52,13 +61,68 @@
 		{/each}
 	</div>
 
-	{#if posts.length === 0}
+	{#if filteredPosts.length === 0}
 		<div class="rounded-2xl border border-white/5 bg-[#12121e] p-12 text-center">
-			<p class="text-gray-400">First post coming soon. I write daily — check back tomorrow.</p>
+			{#if searchQuery}
+				<p class="text-gray-400">No posts match "{searchQuery}".</p>
+			{/if}
+		</div>
+	{/if}
+
+	{#if totalPages > 1}
+		<div class="mt-12 flex items-center justify-center gap-4">
+			<button
+				disabled={currentPage === 1}
+				onclick={() => currentPage--}
+				class="rounded-lg border border-white/10 px-4 py-2 text-sm text-gray-400 transition hover:border-teal-500/30 hover:text-teal-300 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:border-white/10 disabled:hover:text-gray-400"
+			>
+				← Previous
+			</button>
+			<span class="text-sm text-gray-500">
+				Page {currentPage} of {totalPages}
+			</span>
+			<button
+				disabled={currentPage >= totalPages}
+				onclick={() => currentPage++}
+				class="rounded-lg border border-white/10 px-4 py-2 text-sm text-gray-400 transition hover:border-teal-500/30 hover:text-teal-300 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:border-white/10 disabled:hover:text-gray-400"
+			>
+				Next →
+			</button>
 		</div>
 	{/if}
 </div>
 
 <script lang="ts">
 	import { posts } from './posts';
+
+	const POSTS_PER_PAGE = 10;
+
+	let searchQuery = $state('');
+	let currentPage = $state(1);
+
+	const filteredPosts = $derived(
+		searchQuery.trim()
+			? posts.filter(
+					(p) =>
+						p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+						p.excerpt.toLowerCase().includes(searchQuery.toLowerCase()) ||
+						p.tags.some((t) => t.toLowerCase().includes(searchQuery.toLowerCase()))
+				)
+			: posts
+	);
+
+	const totalPages = $derived(Math.ceil(filteredPosts.length / POSTS_PER_PAGE) || 1);
+
+	// Reset to page 1 when search changes
+	$effect(() => {
+		searchQuery;
+		currentPage = 1;
+	});
+
+	const paginatedPosts = $derived(
+		filteredPosts.slice(
+			(currentPage - 1) * POSTS_PER_PAGE,
+			currentPage * POSTS_PER_PAGE
+		)
+	);
 </script>
