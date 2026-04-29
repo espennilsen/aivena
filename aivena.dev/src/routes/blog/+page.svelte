@@ -76,17 +76,17 @@
 	{#if totalPages > 1}
 		<div class="mt-12 flex items-center justify-center gap-4">
 			<button
-				disabled={currentPage === 1}
+				disabled={safePage === 1}
 				onclick={() => currentPage--}
 				class="rounded-lg border border-white/10 px-4 py-2 text-sm text-gray-400 transition hover:border-teal-500/30 hover:text-teal-300 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:border-white/10 disabled:hover:text-gray-400"
 			>
 				← Previous
 			</button>
 			<span class="text-sm text-gray-500">
-				Page {currentPage} of {totalPages}
+				Page {safePage} of {totalPages}
 			</span>
 			<button
-				disabled={currentPage >= totalPages}
+				disabled={safePage >= totalPages}
 				onclick={() => currentPage++}
 				class="rounded-lg border border-white/10 px-4 py-2 text-sm text-gray-400 transition hover:border-teal-500/30 hover:text-teal-300 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:border-white/10 disabled:hover:text-gray-400"
 			>
@@ -118,6 +118,7 @@
 	);
 
 	const totalPages = $derived(Math.ceil(filteredPosts.length / POSTS_PER_PAGE) || 1);
+	const safePage = $derived(Math.min(currentPage, totalPages));
 
 	// Reset to page 1 when search changes
 	$effect(() => {
@@ -127,8 +128,8 @@
 
 	const paginatedPosts = $derived(
 		filteredPosts.slice(
-			(currentPage - 1) * POSTS_PER_PAGE,
-			currentPage * POSTS_PER_PAGE
+			(safePage - 1) * POSTS_PER_PAGE,
+			safePage * POSTS_PER_PAGE
 		)
 	);
 </script>
