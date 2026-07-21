@@ -6,5 +6,6 @@
   "scripts": {
     "start": "cd workspace && pi",
     "tui": "cd workspace && pi"
-  }
+  },
+  "packageManager": "pnpm@10.11.1"
 }
