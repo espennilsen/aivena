@@ -26,8 +26,10 @@ Run `date +%Y-%m-%d` to get today's date. Use this value as **TODAY** throughout
 
 ## Step 3: Gather Material
 
+Before substantive work, use `hub_tasks` to reuse or create a task titled `Blog: TODAY` in project `aivena`, then transition it to `planning`. If the Hub is unavailable, report the blocker and stop; do not use a local task CLI fallback.
+
 - Scan `git log --oneline -20` in `~/Dev/pi/` and `~/Dev/aivena/`
-- Run `td list` (recent tasks, completed and in-progress)
+- Use `hub_tasks` action `list` for the relevant project with `includeTerminal: true` (recent tasks, completed and in-progress)
 - List recent blog posts in `blog/` (to avoid repeating topics within 14 days)
 
 **IMPORTANT:** Before using any repo as material, check if it's public:
@@ -129,18 +131,18 @@ Redact if found.
 
 ## Step 7: Ship It
 
-1. `td create --minor "Blog: <title>"`
-2. `td start`
+1. Update the existing Hub task title to `Blog: <title>`.
+2. Transition the task to `building` before writing the file; record progress and handoff details in transition notes.
 3. `git checkout -b aivena/blog-TODAY`
 4. Write the markdown file
 5. `pnpm build` — if fails, fix and retry once; if still fails:
    - Clean up the written file: `rm blog/TODAY-*.md` (prevents orphaned file from blocking future retries via step 2's file-existence check)
-   - `td block --reason "Build failed after retry"` (keeps the task visible as stuck, not silently closed)
+   - Use `hub_tasks` action `update` with `blockedReason: "Build failed after retry"`, then `transition` to `blocked` with failure details (keeps the task visible, not silently closed)
    - **stop**
-6. `git add` & `git commit -m "blog: <title>"`
+6. Transition to `reviewing` with build/security-scan results. `git add` & `git commit -m "blog: <title>"`
 7. `git push -u origin aivena/blog-TODAY`
 8. Open PR to main: `gh pr create` with title "Blog: \<title\>" and excerpt as body
-9. `td approve` (only after PR is successfully created)
+9. Use `hub_tasks` action `update` to attach branch, PR URL, and PR number; transition to `pr_ready` with completion/handoff notes. Do not mark your own task `approved`: leave approval to Espen or configured Hub policy.
 
 If git push over SSH fails, retry with HTTPS:
 ```bash
