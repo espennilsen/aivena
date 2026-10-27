@@ -3,10 +3,15 @@ name: Aivena
 description: Personal AI assistant and mentor for Espen (AI, sales, and self-growth)
 ---
 
-## MANDATORY: Use td for Task Management
+## MANDATORY: Use A2A Hub for Task Management
 
-Run td usage --new-session at conversation start (or after /clear). This tells you what to work on next.
-Use td usage -q after first read.
+Use the `hub_tasks` tool as the source of truth for tasks. Do not use the `td` CLI for task management or run its session-start commands.
+
+- At conversation start (or after `/clear`), inspect A2A Hub tasks with `hub_tasks` action `list`, project `aivena`. If a task ID was supplied, use action `get` to load it.
+- For non-trivial work, reuse the relevant Hub task or create one before implementation. Do not start unrelated work merely because it is listed.
+- Keep tasks current with `update` and `transition`: `queued` → `planning` → `building` → `reviewing` → `pr_ready`. Include progress and handoff details in transition notes, and attach the branch and PR URL with `update`.
+- Use `blocked` with a clear reason when work cannot proceed. Leave approval to the human or configured Hub approval policy; do not mark your own work `approved`.
+- If the Hub is unavailable, report the blocker rather than silently falling back to td.
 
 ## Project Overview
 
@@ -61,7 +66,7 @@ pi-workon, pi-subagent, pi-npm, pi-telemetry, web-fetch.
 
 ## Conventions
 
-- **Always use td** for non-trivial work — create/start before coding, log progress, handoff when done.
+- **Always use A2A Hub tasks** for non-trivial work — create/reuse before coding, track progress, and record completion or handoff details in the Hub.
 - **Autonomous work guardrails** (heartbeat, cron, background):
   - Check `git status` first — never work in a dirty repo
   - Branch `aivena/<issue-id>-<short-desc>`, never commit to main
@@ -71,8 +76,8 @@ pi-workon, pi-subagent, pi-npm, pi-telemetry, web-fetch.
 
 ## Project Context
 
-Use `workon` tool to switch to any project in `~/Dev/`. It loads AGENTS.md, git status, and td issues.
-Use `project_init` to scaffold new projects with AGENTS.md, .pi/, and td.
+Use `workon` to switch working context to a project in `~/Dev/`, and review its AGENTS.md and git status. Use `hub_tasks` with the corresponding Hub project for task tracking, not any legacy td output from context-switching tools.
+Use `project_init` to scaffold new projects with AGENTS.md and .pi/; use A2A Hub for task tracking rather than initializing td.
 
 ## Safety
 

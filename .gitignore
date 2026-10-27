@@ -10,6 +10,8 @@ package-lock.json
 .todos/
 .sidecar/
 .claude/
+.pi-subagents/
+.py-subagents/
 memory/
 MEMORY.md
 SOUL.md
